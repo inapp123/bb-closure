@@ -5,7 +5,7 @@ Maintainer: Michael Bramer <grisu@debian.org>
 Standards-Version: 2.4.1
 
 Package: bb
-Architecture: i386
+Architecture: i386 m68k powerpc sparc
 Depends: ${shlibs:Depends}
 Description: The aalib-demo with sound-support
  BB is an high quality audio-visual demonstration for your text terminal. 

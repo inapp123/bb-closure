@@ -1,9 +1,39 @@
-bb (1.2-3.1) frozen; urgency=low
+bb (1.2-9) unstable; urgency=low
 
-  * NMU to fix critical bug #31414 (depends on slang0.99.38
-    instead of slang1).
+  * rebuild with new libs Close: #47344 (sorry, me mirror war not
+    updated)
 
- -- Vincent Renardias <vincent@waw.com>  Tue,  5 Jan 1999 21:11:59 +0100
+ -- Michael Bramer <grisu@debian.org>  Mon, 18 Oct 1999 01:48:59 +0200
+
+bb (1.2-8) unstable; urgency=low
+
+  * rebuild with new libs Close: #47344
+
+ -- Michael Bramer <grisu@debian.org>  Fri, 15 Oct 1999 05:56:08 +0200
+
+bb (1.2-7) unstable; urgency=low
+
+  * recompiled with slang1-dev 1.2.2-3 to fix dependency
+
+ -- Michael Bramer <grisu@debian.org>  Wed,  8 Sep 1999 09:38:19 +0200
+
+bb (1.2-6) unstable; urgency=low
+
+  * add 'm68k powerpc sparc' to Architecture (close:#40409)
+
+ -- Michael Bramer <grisu@debian.org>  Tue, 29 Jun 1999 13:07:24 +0200
+
+bb (1.2-5) unstable; urgency=low
+
+  * compile with new ncurses
+
+ -- Michael Bramer <grisu@debian.org>  Thu,  4 Mar 1999 12:15:20 +0100
+
+bb (1.2-4) unstable; urgency=low
+
+  * recompile bb with slang1 (FIX: #29406
+
+ -- Michael Bramer <grisu@debian.org>  Thu, 17 Dec 1998 19:47:28 +0100
 
 bb (1.2-3) unstable; urgency=low
 
