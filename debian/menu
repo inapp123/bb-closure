@@ -1,0 +1,4 @@
+?package(bb):needs=X11 section=Games/Toys\
+  title="bb" longtitle="the aalib-demo" command="/usr/bin/bb"
+?package(bb):needs=text section=Games/Toys\
+  title="bb" longtitle="the aalib-demo" command="/usr/bin/bb"

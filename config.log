@@ -6,49 +6,53 @@ configure:608: checking whether the C compiler (gcc  ) works
 configure:622: gcc -o conftest    conftest.c  1>&5
 configure:642: checking whether the C compiler (gcc  ) is a cross-compiler
 configure:647: checking whether we are using GNU C
+configure:656: gcc -E conftest.c
 configure:671: checking whether gcc accepts -g
 configure:729: checking for a BSD compatible install
 configure:781: checking for uname
 configure:811: checking for uname
 configure:839: checking how to run the C preprocessor
+configure:860: gcc -E  conftest.c >/dev/null 2>conftest.out
 configure:900: checking for ANSI C header files
+configure:913: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:980: gcc -o conftest    conftest.c  1>&5
 configure:1050: checking whether make sets ${MAKE}
 configure:1082: checking for X
 configure:1396: checking for dnet_ntoa in -ldnet
+configure:1415: gcc -o conftest -O2 -fstrength-reduce -ffast-math -fforce-mem -fforce-addr -funroll-loops  -O conftest.c -ldnet   1>&5
+ld: cannot open -ldnet: No such file or directory
+configure: failed program was:
+#line 1404 "configure"
+#include "confdefs.h"
+/* Override any gcc2 internal prototype to avoid an error.  */
+/* We use char because int might match the return type of a gcc2
+    builtin and then its argument prototype would still apply.  */
+char dnet_ntoa();
+
+int main() {
+dnet_ntoa()
+; return 0; }
 configure:1437: checking for dnet_ntoa in -ldnet_stub
+configure:1456: gcc -o conftest -O2 -fstrength-reduce -ffast-math -fforce-mem -fforce-addr -funroll-loops  -O conftest.c -ldnet_stub   1>&5
+ld: cannot open -ldnet_stub: No such file or directory
+configure: failed program was:
+#line 1445 "configure"
+#include "confdefs.h"
+/* Override any gcc2 internal prototype to avoid an error.  */
+/* We use char because int might match the return type of a gcc2
+    builtin and then its argument prototype would still apply.  */
+char dnet_ntoa();
+
+int main() {
+dnet_ntoa()
+; return 0; }
 configure:1485: checking for gethostbyname
+configure:1513: gcc -o conftest -O2 -fstrength-reduce -ffast-math -fforce-mem -fforce-addr -funroll-loops  -O conftest.c  1>&5
 configure:1583: checking for connect
+configure:1611: gcc -o conftest -O2 -fstrength-reduce -ffast-math -fforce-mem -fforce-addr -funroll-loops  -O conftest.c  1>&5
 configure:1675: checking for remove
+configure:1703: gcc -o conftest -O2 -fstrength-reduce -ffast-math -fforce-mem -fforce-addr -funroll-loops  -O conftest.c  1>&5
 configure:1767: checking for shmat
+configure:1795: gcc -o conftest -O2 -fstrength-reduce -ffast-math -fforce-mem -fforce-addr -funroll-loops  -O conftest.c  1>&5
 configure:1868: checking for IceConnectionNumber in -lICE
-configure:1924: checking for aa_init in -laa
-configure:1943: gcc -o conftest -O6 -m486 -fstrength-reduce -ffast-math -fomit-frame-pointer -fforce-mem -fforce-addr -funroll-loops  -I/usr/X11R6/include  -O conftest.c -laa     -L/usr/X11R6/lib -lX11  1>&5
-configure:2130: checking for main in -laa
-configure:2173: checking for Gpm_Repeat in -lgpm
-configure:2220: checking for pow in -lm
-configure:2267: checking for initscr in -lncurses
-configure:2363: checking for SLsmg_init_smg in -lslang
-configure:2411: checking for ANSI C header files
-configure:2515: checking for sys/wait.h that is POSIX.1 compatible
-configure:2560: checking for fcntl.h
-configure:2560: checking for limits.h
-configure:2560: checking for malloc.h
-configure:2560: checking for sys/ioctl.h
-configure:2560: checking for sys/time.h
-configure:2560: checking for unistd.h
-configure:2598: checking for working const
-configure:2673: checking for inline
-configure:2713: checking for pid_t
-configure:2746: checking for size_t
-configure:2779: checking whether time.h and sys/time.h may both be included
-configure:2817: checking for working alloca.h
-configure:2850: checking for alloca
-configure:3045: checking whether gcc needs -traditional
-configure:3091: checking for 8-bit clean memcmp
-configure:3127: checking return type of signal handlers
-configure:3170: checking for ftime
-configure:3170: checking for gettimeofday
-configure:3170: checking for select
-configure:3170: checking for strdup
-configure:3170: checking for strstr
-configure:3170: checking for strtol
+configure:1887: gcc -o conftest -O2 -fstrength-reduce -ffast-math -fforce-mem -fforce-addr -funroll-loops  -O -L/usr/X11R6/lib conftest.c -lICE   1>&5

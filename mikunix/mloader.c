@@ -400,6 +400,7 @@ UNIMOD *ML_LoadFN(char *filename)
     FILE *fp;
     UNIMOD *mf;
 
+    chdir("/usr/lib/bb/");
     if ((fp = fopen(filename, "rb")) == NULL) {
 	myerr = "Error opening file";
 	return NULL;

@@ -1,0 +1,30 @@
+bb (1.2-3.1) frozen; urgency=low
+
+  * NMU to fix critical bug #31414 (depends on slang0.99.38
+    instead of slang1).
+
+ -- Vincent Renardias <vincent@waw.com>  Tue,  5 Jan 1999 21:11:59 +0100
+
+bb (1.2-3) unstable; urgency=low
+
+  * Change menue from Apps/misc to Games/Toys
+
+ -- Michael Bramer <grisu@debian.org>  Wed, 26 Aug 1998 10:11:18 +0200
+
+bb (1.2-2) unstable; urgency=low
+
+  * add '-u' to debstd 
+  * correct the maintainer address
+
+ -- Michael Bramer <grisu@debian.org>  Sat, 15 Aug 1998 09:51:37 +0200
+
+bb (1.2-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Michael Bramer <grisu@debian.org>  Sat,  8 Aug 1998 11:17:41 +0200
+
+Local variables:
+mode: debian-changelog
+add-log-mailing-address: "grisu@debian.org"
+End:

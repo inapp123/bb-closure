@@ -1,0 +1,11 @@
+Source: bb
+Section: misc
+Priority: optional
+Maintainer: Michael Bramer <grisu@debian.org>
+Standards-Version: 2.4.1
+
+Package: bb
+Architecture: i386
+Depends: ${shlibs:Depends}
+Description: The aalib-demo with sound-support
+ BB is an high quality audio-visual demonstration for your text terminal. 

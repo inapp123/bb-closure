@@ -73,13 +73,15 @@ bb_snd_server1:
 	@echo " #edit makefile for your system"
 	@echo " make"
 	@echo "-------------------------------------------------------------------------"
-	@#cd mikunix; make; cd ..
+	cd mikunix; make; cd ..
 
 clean:
 	rm -f bb bb_snd_server
 	rm -f core `find . -name '*.[oa]' -print`
 	rm -f core `find . -name '*~' -print`
 	rm -f core `find . -type f -name 'core' -print`
+	rm -f makefile
+	rm -f config.log config.status config.cache
 
 distclean:clean
 	rm aconfig.h config.log config.status config.cache Makefile
