@@ -146,7 +146,7 @@ static void displaytext(int p)
 	    x = 0;
 	    x1 = 0;
 	    for (x1 = x = 0; x < strlen(line[i]); x++, x1++) {
-		while (((unsigned char) line[i][x]) < 20)
+		while (((unsigned char) line[i][x]) < 20 && line[i][x])
 		    a = line[i][x] - 1, x++;
 		if (x < strlen(line[i])) {
 		    s[0] = line[i][x];
@@ -265,11 +265,13 @@ void credits2(void)
 	    plast = p;
 	}
       again:
-#ifndef __DJGPP__
-	ch = aa_getkey(context, 1);
-#else
-	while ((ch = bbupdate()) == AA_NONE) ;
-#endif
+	while ((ch = bbupdate()) == AA_NONE) 
+	  {
+	    int t=tl_process_group (syncgroup, NULL);
+	    if (t>1000000/10)
+	      t=1000000/10;
+	    tl_sleep (t);
+	  }
 
 	switch (ch) {
 	case '1':

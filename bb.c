@@ -24,6 +24,18 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+
+#if TIME_WITH_SYS_TIME
+# include <sys/time.h>
+# include <time.h>
+#else
+# if HAVE_SYS_TIME_H
+#  include <sys/time.h>
+# else
+#  include <time.h>
+# endif
+#endif
+
 #include <aalib.h>
 #include "bb.h"
 
@@ -89,19 +101,23 @@ void centerprinth(int x, int y, double size, int color, char *text, int mode)
 static void (*control1) (int);
 static int called = 0;
 
-static void mycontrol(int i)
+static void mycontrol(void *data, int i)
 {
     called = 1;
     if (control1 != NULL)
 	control1(i);
+}
+static void mycontrol2(void *data, int i)
+{
+   ((void (*) (int))data)(i);
 }
 
 int bbupdate()
 {
     int ch;
     tl_update_time();
-    update_sound();
     TIME = tl_lookup_timer(scenetimer);
+    tl_process_group (syncgroup, NULL);
     ch = aa_getkey(context, 0);
     switch (ch) {
     case 's':
@@ -130,26 +146,23 @@ void timestuff(int rate, void (*control) (int), void (*draw) (void), int maxtime
     if (rate < 0) {
 	waitmode = 1, rate = -rate;
 	control1 = control;
-	tl_set_multihandler(timer, mycontrol);
+	tl_set_multihandler(timer, mycontrol, NULL);
     }
     else
-	tl_set_multihandler(timer, control);
+	tl_set_multihandler(timer, mycontrol2, control);
     tl_set_interval(timer, 1000000 / rate);
     tl_add_timer(syncgroup, timer);
     tl_reset_timer(timer);
+    tl_slowdown_timer (timer, starttime - TIME);
     if (control != NULL)
 	control(1);
     while (!finish_stuff && TIME < endtime) {
 	called = 0;
-	t = tl_process_group(syncgroup);
 	bbupdate();
+	t = tl_process_group(syncgroup, NULL);
 	if (TIME > endtime)
 	    break;
-#ifdef __DJGPP__
-	if (0)
-#else
 	if (!called && waitmode)
-#endif
 	    tl_sleep(t);
 	else {
 	    if (draw != NULL)
@@ -160,24 +173,27 @@ void timestuff(int rate, void (*control) (int), void (*draw) (void), int maxtime
     tl_free_timer(timer);
 }
 
-void bbwait(int maxtime)
+void
+bbwait (int maxtime)
 {
-    int wait;
-    if (finish_stuff)
-	return;
-    bbupdate();
-    endtime = starttime + maxtime;
-#ifdef __DJGPP__
-    while (TIME < endtime)
-	bbupdate();
-#else
-    wait = maxtime + starttime - TIME;
+  int wait;
+  if (finish_stuff)
+    return;
+  bbupdate ();
+  endtime = starttime + maxtime;
 
-    if (wait > 0) {
-	tl_sleep(maxtime + starttime - TIME);
+  wait = endtime - TIME;
+  while (wait > 0)
+    {
+      int t;
+      bbupdate ();
+      t = tl_process_group (syncgroup, NULL);
+      wait = endtime - TIME;
+      if (wait < t)
+	t = wait;
+      tl_sleep (t);
     }
-#endif
-    starttime = endtime;
+  starttime = endtime;
 }
 
 void bbflushwait(int maxtime)
@@ -185,6 +201,7 @@ void bbflushwait(int maxtime)
     int wait;
     if (finish_stuff)
 	return;
+    bbupdate();
     wait = maxtime + starttime - TIME;
     if (wait > 0) {
 	aa_flush(context);
@@ -242,10 +259,13 @@ int bb(void)
 	    bbupdate();
 	    starttime = endtime = TIME;
 
+	    aa_resize (context);
 	    scene1();
+	    aa_resize (context);
 	    scene3();
 	    if (quitnow)
 		goto quit;
+	    aa_resize (context);
 	    vezen(&fk1, &fk2, &fk3, &fk4);
 	    messager("FILIP KUPSA known as FK, Tingle Notions, Dawn Music\n"
 		"birth: June 22 1979, Tabor, Czech Republic, sex: male\n"
@@ -261,8 +281,11 @@ int bb(void)
 		     "\n"
 		     "Contact address: via KT");
 	    devezen2();
+	    aa_resize (context);
 	    scene4();
+	    aa_resize (context);
 	    scene2();
+	    aa_resize (context);
 	    if (quitnow)
 		goto quit;
 	    vezen(&ms1, &ms2, &ms3, &ms4);
@@ -278,11 +301,15 @@ int bb(void)
 		     "\n"
 		     "Contact address: titania@mbox.vol.cz");
 	    devezen3();
+	    aa_resize (context);
 	    scene8();
+	    aa_resize (context);
 	    scene6();
+	    aa_resize (context);
 	case 2:
 	    if (quitnow)
 		goto quit;
+	    aa_resize (context);
 	    vezen(&kt1, &kt2, &kt3, &kt4);
 	    messager("KAMIL TOMAN known as KT, Kato, Whale, Bart\n"
 		 "birth: May 19 1979, Tabor, Czech Republic, sex: male\n"
@@ -299,14 +326,18 @@ int bb(void)
 	    bbupdate();
 	    starttime = endtime = TIME;
 	    devezen1();
+	    aa_resize (context);
 	    if (quitnow)
 		goto quit;
+	    aa_resize (context);
 	    scene7();
 	    if (quitnow)
 		goto quit;
+	    aa_resize (context);
 	    scene5();
 	    if (quitnow)
 		goto quit;
+	    aa_resize (context);
 	    scene10();
 	    vezen(&hh1, &hh2, &hh3, &hh4);
 	    messager("JAN HUBICKA known as HH, Jahusoft, HuJaSoft, JHS, UNIX, Honza\n"
@@ -321,15 +352,18 @@ int bb(void)
 		 "2001 - Planning an assassination of dictator Bill G.\n"
 		     "\n"
 		     "Contact address: hubicka@paru.cas.cz");
+	    aa_resize (context);
 	    devezen4();
 	    if (quitnow)
 		goto quit;
+	    aa_resize (context);
 	    credits();
 	    if (quitnow)
 		goto quit;
 	case 3:
 	    if (loopmode)
 		break;
+	    aa_resize (context);
 	    credits2();
 	}
     while (loopmode);

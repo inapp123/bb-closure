@@ -1,3 +1,96 @@
+bb (1.3rc1-3) unstable; urgency=low
+
+  * debian/changelog: Removed emacs cruft.
+  * Changed my email address to uwe@debian.org.
+  * debian/rules: Use a recent dh_make template.
+
+ -- Uwe Hermann <uwe@debian.org>  Sun, 24 Mar 2002 23:53:40 +0100
+
+bb (1.3rc1-2) unstable; urgency=low
+
+  * Enable hack in backconv.c, so that Joey Hess <joey@kitenet.net> can
+    remove a far uglier hack in aalib (Closes: #112039).
+  * Build-Depend on aalib-dev >= 1.4p5-7 (the first version without the hack).
+  * debian/menu: Use X11 and vc, not X11 and text.
+  * bb.1: Fix "SEE ALSO" link. It's aa3d(1) not aa3d(6).
+
+ -- Uwe Hermann <uh1763@hermann-uwe.de>  Sun, 30 Dec 2001 20:08:43 +0100
+
+bb (1.3rc1-1) unstable; urgency=low
+
+  * New maintainer (with permission from Michael Bramer <grisu@debian.org>).
+  * Repackaged from scratch using debhelper v3.
+  * Acknowledge NMU (Thanks Steve!).
+    Closes: #84976, #101453, #103171, #107905, #117144, #112200.
+  * bb.1:
+      + Added more programs to the "SEE ALSO" section.
+      + Improved description.
+      + Added BUGS and LICENSE sections.
+      + Fixed some typos and several smaller issues.
+  * debian/control:
+     + Removed useless Build-Depends 'debmake', 'slang1-dev',
+       'xlibs-dev' and 'libncurses5-dev'. debmake is not used anymore (we use
+       debhelper now) and the others are not used directly, but are
+       dependencies of aalib...
+     + Moved to section 'games' because it IMHO fits better in there...
+     + Slightly changed description.
+  * debian/copyright:
+     + Updated URL to the upstream tarball.
+     + List upstream author.
+  * debian/dirs: Removed, not needed.
+  * debian/docs: Additionally install AUTHORS.
+  * debian/rules:
+      + Use $(CURDIR) instead of `pwd`.
+      + Added support for DEB_BUILD_OPTIONS.
+  * debian/menu: Small fix.
+  * README: Fixed a few typos and other minor issues.
+  * Fixed cruft from patch which didn't apply correctly (Closes: #119070).
+  * Fixed all compiler warnings.
+
+ -- Uwe Hermann <uh1763@hermann-uwe.de>  Sun, 16 Dec 2001 20:48:55 +0100
+
+bb (1.3rc1-0.1) unstable; urgency=low
+
+  * Non-Maintainer Upload for Bug-Squashing Party.
+  * Fix Build-Depends from debhelper to debmake. (Closes: #112200)
+  * Update Build-Depends as well.
+  * Update to 1.3rc1. (Closes: #112039)
+  * Said files don't exist in this release. (Closes: #84976)
+  * Also fixed in this release. (Closes: #107905)
+  * bb_snd_server was removed upstream. (Closes: #101453)
+  * Apply Stephen Stafford's patch to the manpage. (Closes: #103171)
+  * Also apply Uwe Hermann's patch to the manpage. (Closes: #117144)
+  * Add ugly hack to debian/rules to include upstream changelog.
+  * *.s3m have moved to /usr/share/bb, FHS-compliance, here we come.
+  * Fixed lintian errors. (Standards-Version, rpath, not calling
+    dpkg-gencontrol with -isp, and add-log-mail-address in changelog.)
+
+ -- Steve Kowalik <stevenk@debian.org>  Sat, 10 Nov 2001 17:00:42 +1100
+
+bb (1.2-12) unstable; urgency=low
+
+  * fix Build-Depends (s/debmake/debhelper/)
+
+ -- Michael Bramer <michael@debsupport.de>  Mon, 15 Jan 2001 18:55:14 +0100
+
+bb (1.2-11) unstable; urgency=low
+
+  * change architectures to any
+
+ -- Michael Bramer <grisu@debian.org>  Mon, 15 Jan 2001 18:44:04 +0100
+
+bb (1.2-10) unstable; urgency=low
+
+  * rebuild with new libs Close: #80420
+  * fix description Close: #63243
+  * add alpha patch Close: #66145
+  * add Build-Depends Close: #70202, #78375
+  * change ./bb_snd_server to bb_snd_server in unix.c. Close: #78376
+  * patch man-page Close: #79965
+  * Thanks to all Bug-Reporters
+
+ -- Michael Bramer <michael@debsupport.de>  Mon, 25 Dec 2000 10:02:28 +0100
+
 bb (1.2-9) unstable; urgency=low
 
   * rebuild with new libs Close: #47344 (sorry, me mirror war not
@@ -54,7 +147,3 @@ bb (1.2-1) unstable; urgency=low
 
  -- Michael Bramer <grisu@debian.org>  Sat,  8 Aug 1998 11:17:41 +0200
 
-Local variables:
-mode: debian-changelog
-add-log-mailing-address: "grisu@debian.org"
-End:

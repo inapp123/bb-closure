@@ -1049,6 +1049,7 @@ static /*INLINE */ void fill(void)
 		rx++;
 	    }
 	    if (rs1 != NULL)
+	    {
 		if (n == 1) {
 		    for (; vbuff < vend; vbuff += d->scanline, vsrc += d->scanline)
 			*vbuff = *vsrc;
@@ -1056,6 +1057,7 @@ static /*INLINE */ void fill(void)
 		    for (; vbuff < vend; vbuff += d->scanline, vsrc += d->scanline)
 			memset((char *) vbuff, (int) *vsrc, (size_t) n);
 		}
+	    }
 	}
     }
 }

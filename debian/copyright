@@ -1,8 +1,30 @@
-This package was debianized by Michael Bramer grisu@debian.org on
-Sat,  8 Aug 1998 11:17:41 +0200.
+This package was debianized by Uwe Hermann <uh1763@hermann-uwe.de> on
+Sun, 16 Dec 2001 17:07:05 +0100.
 
-It was downloaded from ftp://bonn.linux.de/pub/misc/bb-1.2.tar.gz 
+This package was originally debianized by Michael Bramer <grisu@debian.org>,
+who also maintained it until version 1.2-12.
+
+It was downloaded from
+http://prdownloads.sourceforge.net/aa-project/bb-1.3rc1.tar.gz
+
+Upstream Author: Jan Hubicka <hubicka@freesoft.cz>
 
 Copyright:
 
-The Copyright is the GPL-Copyleft. See /usr/doc/copyright/GPL
+   This package is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; version 2 dated June, 1991.
+
+   This package is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this package; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+   02111-1307, USA.
+
+On Debian GNU/Linux systems, the complete text of the GNU General
+Public License can be found in `/usr/share/common-licenses/GPL'.
+

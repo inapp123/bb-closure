@@ -1,0 +1,137 @@
+.TH BB 1 "December 16, 2001"
+.SH NAME
+bb \- an ASCII-art demo
+.SH SYNOPSIS
+.B bb
+.RB [ options ]
+.SH DESCRIPTION
+.B bb
+is a high quality audio-visual demonstration for your text terminal.
+.SH OPTIONS
+A summary of options are included below.
+For a complete description type 
+.BR bb 
+.BR -help .
+.TP
+.B \-help
+Show summary of options.
+.TP
+.B \-loop
+Play demo in infinite loop.
+.TP
+.B \-driver
+Select driver. Available drivers: linux, slang, X11, stdout, stderr.
+.TP
+.B \-kbddriver
+Select keyboard driver. Available drivers: slang, X11, stdin.
+.TP
+.B \-mousedriver
+Select mouse driver. Available drivers: X11, gpm, dos.
+.TP
+.B \-width
+Set width.
+.TP
+.B \-height
+Set height.
+.TP
+.B \-minwidth
+Set minimum width.
+.TP
+.B \-minheight
+Set minimum height.
+.TP
+.B \-maxwidth
+Set maximum width.
+.TP
+.B \-maxheight
+Set maximum height.
+.TP
+.B \-recwidth
+Set recommended width.
+.TP
+.B \-recheight
+Set recommended height.
+.TP
+.B \-dim
+Enable usage of dim (half bright) attribute.
+.TP
+.B \-bold
+Enable usage of bold (double bright) attribute.
+.TP
+.B \-reverse
+Enable usage of reverse attribute.
+.TP
+.B \-normal
+Enable usage of normal attribute.
+.TP
+.B \-boldfont
+Enable usage of boldfont attribute.
+.TP
+.B \-no<attr>
+Disable attribute (i.e
+.BR -nobold ).
+.TP
+.B \-extended
+Use all 256 characters.
+.TP
+.B \-eight
+Use eight bit ASCII.
+.TP
+.B \-font <font>
+Select font. This option is used on hardware where aalib is unable to
+determine the current font. Available fonts: vga8, vga9, mda14, vga14, X8x13,
+X8x16, X8x13bold, vgagl8, line.
+.TP
+.B \-inverse
+Enable inverse rendering.
+.TP
+.B \-noinverse
+Disable inverse rendering.
+.TP
+.B \-bright <val>
+Set brightness (0-255).
+.TP
+.B \-contrast <val>
+Set contrast (0-255).
+.TP
+.B \-gamma <val>
+Set gamma correction value (0-1).
+.TP
+.B \-nodither
+Disable dithering.
+.TP
+.B \-floyd_steinberg
+Floyd-Steinberg dithering.
+.TP
+.B \-error_distribution
+Error distribution dithering.
+.TP
+.B \-random <val>
+Set random dithering value (0-inf).
+.TP
+.B \-dimmul <val>
+Multiply factor for dim attribute (5.3).
+.TP
+.B \-boldmul <val>
+Multiply factor for bold attribute (2.7).
+.SH BUGS
+Please report any bugs you find to Jan Hubicka <hubicka@freesoft.cz>.
+.SH LICENCE
+.B bb
+is covered by the GNU General Public License (GPL).
+.SH SEE ALSO
+.BR aafire (1),
+.BR aainfo (1),
+.BR aasavefont (1),
+.BR aatest (1),
+.BR aview (1),
+.BR asciiview (1),
+.BR aaflip (1),
+.BR aa3d (1),
+.BR xaos (6),
+.BR aatv (1).
+.SH AUTHOR
+Jan Hubicka <hubicka@freesoft.cz>
+.PP
+This manual page was written by Michael Bramer <grisu@debian.org>,
+for the Debian GNU/Linux system (but may be used by others).
