@@ -1,3 +1,20 @@
+bb (1.3rc1-5) unstable; urgency=low
+
+  * Improved description (Closes: #209430).
+  * Standards-Version: 3.6.1.0 (no changes).
+  * debian/menu: Fixed Typos.
+
+ -- Uwe Hermann <uwe@debian.org>  Thu, 25 Sep 2003 20:19:45 +0200
+
+bb (1.3rc1-4) unstable; urgency=low
+
+  * debian/menu: s/needs=vc/needs=text/ (Closes: #195075).
+  * Standards-Version: 3.5.9.0.
+  * Build-Depends: debhelper (>> 4.0.0).
+  * Use a recent dh_make template for debian/rules.
+
+ -- Uwe Hermann <uwe@debian.org>  Tue,  3 Jun 2003 16:33:48 +0200
+
 bb (1.3rc1-3) unstable; urgency=low
 
   * debian/changelog: Removed emacs cruft.
