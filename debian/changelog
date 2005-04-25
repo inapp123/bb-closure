@@ -1,3 +1,12 @@
+bb (1.3rc1-6) unstable; urgency=low
+
+  * Fixed segfault on amd64 and alpha (Closes: #304434, #32160).
+    Thanks go to Corey Hickey, Kaare Hviid and Helge Kreutzmann for the
+    patch and for testing it on amd64 and alpha.
+  * Updated debian/copyright.
+
+ -- Uwe Hermann <uwe@debian.org>  Mon, 25 Apr 2005 02:45:35 +0200
+
 bb (1.3rc1-5) unstable; urgency=low
 
   * Improved description (Closes: #209430).

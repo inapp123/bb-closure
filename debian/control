@@ -7,8 +7,8 @@ Standards-Version: 3.6.1.0
 
 Package: bb
 Architecture: any
-Depends: ${shlibs:Depends} ${misc:Depends}
-Description: An ASCII-art demo based on AAlib
+Depends: ${shlibs:Depends}
+Description: ASCII-art demo based on AAlib
  This package contains a 'high quality audio-visual demonstration'
  of ASCCI-art using AAlib, a portable ASCII-art graphics library.
  This demonstration can be displayed in a text- or X11-terminal.
