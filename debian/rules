@@ -25,7 +25,7 @@ endif
 
 config.status: configure
 	dh_testdir
-	./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --mandir=\$${prefix}/share/man --bindir=\$${prefix}/bin --datadir=\$${prefix}/share
+	./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --mandir=\$${prefix}/share/man --bindir=\$${prefix}/games --datadir=\$${prefix}/share
 
 	# Don't use -rpath...
 	cat Makefile | sed 's/-Wl,-rpath,\/usr\/lib//g' > Makefile.new; sleep 1

@@ -2,8 +2,8 @@ Source: bb
 Section: games
 Priority: optional
 Maintainer: Uwe Hermann <uwe@debian.org>
-Build-Depends: debhelper (>> 4.0.0), libmikmod2-dev, aalib1-dev (>= 1.4p5-7)
-Standards-Version: 3.6.1.0
+Build-Depends: debhelper (>> 4.0.0), libmikmod2-dev, libaa1-dev (>= 1.4p5-28)
+Standards-Version: 3.6.2.0
 
 Package: bb
 Architecture: any
