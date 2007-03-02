@@ -1,3 +1,17 @@
+bb (1.3rc1-8) unstable; urgency=low
+
+  * Depend on oss-compat to make music/sound work again. This іs
+    bug #385844 and should really be fixed in libmikmod2, but until that
+    is done I'll fix it in bb locally.
+  * Fix typo in description (Closes: #363176).
+  * debian/copyright:
+    + New FSF address (lintian).
+    + Be more verbose, print license of all files.
+    + My packaging is public domain.
+  * Standards-Version: 3.7.2.2 (no changes required).
+
+ -- Uwe Hermann <uwe@debian.org>  Fri,  2 Mar 2007 15:36:01 +0100
+
 bb (1.3rc1-7) unstable; urgency=low
 
   * Fix FTBS with gcc 3.4 and 4.0 (Closes: #317415).

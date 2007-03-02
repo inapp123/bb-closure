@@ -1,15 +1,13 @@
-This package was debianized by Uwe Hermann <uh1763@hermann-uwe.de> on
-Sun, 16 Dec 2001 17:07:05 +0100.
+This package was debianized by Michael Bramer <grisu@debian.org> on
+Sat,  8 Aug 1998 11:17:41 +0200.
 
-This package was originally debianized by Michael Bramer <grisu@debian.org>,
-who also maintained it until version 1.2-12.
+The current Debian maintainer is Uwe Hermann <uwe@debian.org>.
 
-It was downloaded from
-http://prdownloads.sourceforge.net/aa-project/bb-1.3rc1.tar.gz
-
-Copyright Holder: Jan Hubicka <hubicka@freesoft.cz>
+It was downloaded from: http://aa-project.sourceforge.net
 
 Upstream Author: Jan Hubicka <hubicka@freesoft.cz>
+
+Copyright: 1997 AA-group <aa@horac.ta.jcu.cz>
 
 License:
 
@@ -24,10 +22,66 @@ License:
    GNU General Public License for more details.
    
    You should have received a copy of the GNU General Public License
-   along with this package; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-   02111-1307, USA.
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111, USA.
 
 On Debian systems, the complete text of the GNU General
 Public License can be found in `/usr/share/common-licenses/GPL'.
+
+-------------------------------------------------------------------------------
+
+autopilo.c, autopilo.h, complex.h, formulas.c, formulas.h,
+scene7.c, timers.c, timers.h, ui.h, zoom.c, zoom.h:
+
+Copyright: 1996,1997 Jan Hubicka
+           1996,1997 Thomas Marsh
+
+License:
+
+   GPL, version 2 or any later version (see above).
+
+-------------------------------------------------------------------------------
+
+julia.c:
+
+Copyright:
+
+   "This file was taken from XaoS-the fast portable realtime interactive 
+   fractal zoomer. but it is simplified for BB. You may get complette
+   sources at XaoS homepage (http://www.paru.cas.cz/~hubicka/XaoS)."
+
+License:
+
+   [ No explicit note, but XaoS is GPL'd (see also files above), so:
+   GPL, version 2 or any later version (see above). ]
+
+-------------------------------------------------------------------------------
+
+ctrl87.c, ctrl87.h:
+
+Copyright:
+
+   "This file is part of msdos driver for XaoS."
+
+License:
+
+   [ No copyright/license note, but XaoS is GPL'd (see also files above), so:
+   GPL, version 2 or any later version (see above). ]
+
+-------------------------------------------------------------------------------
+
+minilzo.c, minilzo.h, mylzo.h:
+
+Copyright: 1996,1997 Markus Franz Xaver Johannes Oberhumer
+
+License:
+
+   GPL, version 2 or any later version (see above).
+
+-------------------------------------------------------------------------------
+
+Debian packaging copyright:
+
+   The packaging done by Uwe Hermann <uwe@debian.org> is hereby
+   released as public domain.
 
