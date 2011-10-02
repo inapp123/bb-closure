@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Uwe Hermann <uwe@debian.org>
 Build-Depends: debhelper (>> 4.0.0), libmikmod2-dev, libaa1-dev (>= 1.4p5-28)
 Standards-Version: 3.7.2.2
+Homepage: http://aa-project.sourceforge.net/bb/
 
 Package: bb
 Architecture: any

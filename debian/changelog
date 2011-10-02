@@ -1,3 +1,12 @@
+bb (1.3rc1-8.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Makefile.am, Makefile.in: Added -lm to bb_LDADD.  Fixes FTBFS.
+    Patch by Bhavani Shankar R <bhavi@ubuntu.com>.  Closes: #553954, #608869.
+  * debian/control: Added Homepage field.  Closes: #495048.
+
+ -- Bart Martens <bartm@debian.org>  Sun, 02 Oct 2011 15:16:31 +0200
+
 bb (1.3rc1-8) unstable; urgency=low
 
   * Depend on oss-compat to make music/sound work again. This іs
