@@ -1,0 +1,14 @@
+BB vs PulseAudio
+================
+
+Unfortunately BB does not work under X if PulseAudio is active and
+Music is requested. If you have PulseAudio installed and want to show
+off BB with Music, you can do that by switching to the virtual text
+console and running BB there.
+
+Due to this issue Music in BB is turned of by default in Debian.
+
+This issue is tracked in the Debian Bug Tracking System at
+https://bugs.debian.org/761023
+
+ -- Axel Beckert <abe@debian.org>, Wed,  1 Apr 2015 22:13:34 +0200

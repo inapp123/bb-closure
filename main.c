@@ -155,9 +155,9 @@ main (int argc, char *argv[])
 
   bbinit (argc, argv);
 #ifdef HAVE_LIBMIKMOD
-  aa_puts (context, 0, p++, AA_SPECIAL, "Music?[Y/n]");
+  aa_puts (context, 0, p++, AA_SPECIAL, "Music?[y/N]");
   aa_flush (context);
-  if (tolower (aa_getkey (context, 1)) != 'n')
+  if (tolower (aa_getkey (context, 1)) == 'y')
     {
       MikMod_RegisterAllDrivers ();
       MikMod_RegisterLoader (&load_s3m);
