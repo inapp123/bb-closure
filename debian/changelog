@@ -1,3 +1,13 @@
+bb (1.3rc1-8.3) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Improve README.Debian from previous upload:
+    + Mention how to run bb under PulseAudio anyways (Thanks Anthony
+      DeRobertis!)
+    + Fix typo (Thanks Antoine Amarilli!)
+
+ -- Axel Beckert <abe@debian.org>  Sun, 12 Apr 2015 22:10:43 +0200
+
 bb (1.3rc1-8.2) unstable; urgency=medium
 
   * Non-maintainer upload.
