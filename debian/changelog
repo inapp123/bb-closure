@@ -1,3 +1,27 @@
+bb (1.3rc1-8.5) unstable; urgency=medium
+
+  * Non-maintainer upload.
+
+  [ Axel Beckert ]
+  * Move from no more supported debhelper compatibility level 4 to
+    currently recommended level 9 and make debian/rules and debian/control
+    more future-proof:
+    + Change "dh_clean -k" to "dh_prep".
+    + Remove explicit argument from dh_installchangelogs. (No more needed.)
+    + Add recommended targets build-indep and build-arch.
+    + Add ${misc:Depends} to Depends
+    + Closes: #817373
+  * Remove config.guess and config.sub from Debian's .diff.gz and use
+    dh_autotools-dev_{restore,update}config to provide up-to-date files at
+    build time.
+    + Add build-dependency on autotools-dev.
+
+  [ Logan Rosen ]
+  * debian/rules: Don't ignore all distclean errors.
+  * debian/copyright: Don't point to symlink GPL.
+
+ -- Axel Beckert <abe@debian.org>  Thu, 21 Jul 2016 19:21:48 +0200
+
 bb (1.3rc1-8.4) unstable; urgency=medium
 
   * Non-maintainer upload.
