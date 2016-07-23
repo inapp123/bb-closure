@@ -20,7 +20,7 @@ unsigned short _control87(unsigned short newcw, unsigned short mask)
     asm volatile ("                                                    \n\
       wait                                                          \n\
       fstcw  %0                                                       "
-		  : /* outputs */ "=g" (cw)
+		  : /* outputs */ "=m" (cw)
 		  :		/* inputs */
     );
 

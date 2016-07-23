@@ -1,8 +1,3 @@
-/* This file was taken from XaoS-the fast portable realtime interactive 
-   fractal zoomer. but it is simplified for BB. You may get complette
-   sources at XaoS homepage (http://www.paru.cas.cz/~hubicka/XaoS
-*/
-
 /* 
  *     XaoS, a fast portable realtime fractal zoomer 
  *                  Copyright (C) 1996,1997 by
@@ -27,70 +22,43 @@
 
 #ifndef TIMERS_H
 #define TIMERS_H
-
-
 #include "config.h"
-
-#ifndef _plan9_
-#ifdef HAVE_GETTIMEOFDAY
-#ifdef HAVE_UNISTD_H
-/*#include <unistd.h>*/
-#endif
-#else
-#ifdef HAVE_FTIME
-#include <sys/timeb.h>
-#endif
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-#ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
-#else
-#include <time.h>
-#endif
-#endif
-
-struct timer {
-#ifdef HAVE_UCLOCK
-    uclock_t lastactivated;
-#else
-#ifdef USE_CLOCK
-    int lastactivated;
-#else
-#ifdef HAVE_GETTIMEOFDAY
-    struct timeval lastactivated;
-#else
-#ifdef _plan9_
-    int lastactivated;
-#else
-#ifdef HAVE_FTIME
-    struct timeb lastactivated;
-#endif
-#endif
-#endif
-#endif
-#endif
-    int interval;
-    int wait;
-    void (*handler) (void);
-    void (*multihandler) (int);
-    struct timer *next, *previous, *group;
-};
+struct timer;
+struct timeemulator;
 typedef struct timer tl_timer;
 typedef struct timer tl_group;
 
-void tl_update_time(void);
-int tl_lookup_timer(tl_timer * t);
-void tl_reset_timer(tl_timer * t);
-tl_timer *tl_create_timer(void);
-tl_group *tl_create_group(void);
-void tl_set_interval(tl_timer * timer, int interval);
-void tl_set_handler(tl_timer * timer, void (*handler) (void));
-void tl_set_multihandler(tl_timer * timer, void (*handler) (int));
-void tl_add_timer(tl_group * group, tl_timer * timer);
-void tl_remove_timer(tl_timer * timer);
-void tl_free_timer(tl_timer * timer);
-void tl_free_group(tl_group * timer);
-int tl_process_group(tl_group * group);
+void tl_update_time (void);
+tl_timer *tl_create_timer (void);
+tl_group *tl_create_group (void);
+void tl_set_interval (tl_timer * timer, int interval);
+void tl_set_handler (tl_timer * timer, void (*handler) (void *), void *userdata);
+void tl_set_multihandler (tl_timer * timer, void (*handler) (void *, int), void *userdata);
+void tl_add_timer (tl_group * group, tl_timer * timer);
+void tl_remove_timer (tl_timer * timer);
+void tl_free_timer (tl_timer * timer);
+void tl_free_group (tl_group * timer);
+void tl_stop_timer (tl_timer * t);
+void tl_resume_timer (tl_timer * t);
+void tl_slowdown_timer (tl_timer * t, int time);
+int tl_process_group (tl_group * group, int *activated);
 extern tl_group *syncgroup, *asyncgroup;
-void tl_sleep(int);
-#endif				/* TIMER_H */
+void tl_sleep (int);
+void tl_allegromode (int mode);	/*Just for djgpp */
+int tl_lookup_timer (tl_timer * t) REGISTERS (3);
+void tl_reset_timer (tl_timer * t) REGISTERS (3);
+
+struct timeemulator *tl_create_emulator(void);
+void tl_free_emulator(struct timeemulator *t);
+void tl_elpased(struct timeemulator *t, int elpased);
+void tl_emulate_timer(struct timer *t, struct timeemulator *e);
+void tl_unemulate_timer(struct timer *t);
+
+#ifdef __cplusplus
+}
+#endif
+#endif /* TIMER_H */

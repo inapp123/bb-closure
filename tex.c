@@ -44,8 +44,6 @@
 #define ArC 12000
 #define MaxFaces 500
 
-aa_context *context;
-aa_renderparams *params;
 typedef unsigned char byte;
 typedef unsigned short int word;
 typedef unsigned long dword;

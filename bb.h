@@ -52,7 +52,7 @@ void centerprint(int x, int y, double size, int color, char *text,int mode);
 double getwidth(double);
 void centerprinth(int x, int y, double size, int color, char *text,int mode);
 
-struct font *uncompressfont(aa_font * font);
+struct font *uncompressfont(const aa_font * font);
 void fastscale(char *b1, char *b2, int x1, int x2, int y1, int y2, int width1, int width2, int color);
 void print(int x, int y, float width, int height, struct font *f, int color, char *text);
 void draw(void);
@@ -96,7 +96,6 @@ void drawprujezd(char *mesg, int starttime);
 void dispimg(struct image *image,int);
 void vezen(struct image *i1, struct image *i2, struct image *i3, struct image *i4);
 void play();
-void update_sound();
 void wait_sound();
 char *decompressimg(struct image *image);
 void scale(struct image *image, int x1, int y1, int x2, int y2);

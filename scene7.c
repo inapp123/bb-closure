@@ -114,7 +114,7 @@ static void ui_waitfunc(void)
 {
     int l;
     bbupdate();
-    tl_process_group(syncgroup);
+    tl_process_group(syncgroup, NULL);
     l = tl_lookup_timer(maintimer);
     if (interruptiblemode) {
 	if (zcontext->incalculation && !starttime1)
@@ -209,7 +209,7 @@ static void updatestatus(void)
     ui_display();
     sprintf(zoomed, "%.2f", times);
 
-    tl_process_group(syncgroup);
+    tl_process_group(syncgroup, NULL);
     bbupdate();
     drawingtime = tl_lookup_timer(maintimer);
     tl_reset_timer(maintimer);
@@ -415,15 +415,6 @@ static void main_loop(void)
 	    if (!displayed)
 		ui_do_fractal(ANIMATION);
 	}
-	/*if ((time = tl_process_group(syncgroup)) != -1) {
-	   if (!inmovement) {
-	   if (time > 1000000 / 50)
-	   time = 1000000 / 50;
-	   if (!inmovement && !autopilot)
-	   tl_sleep(time);
-	   }
-	   inmovement = 1;
-	   } */
 	displayed = 0;
 	inmovement = ui_mouse();
     }
@@ -510,7 +501,7 @@ void scene6(void)
     speedup = 1 * STEP;
     maxstep *= 5;
     step = -maxstep;
-    tl_process_group(syncgroup);
+    tl_process_group(syncgroup, NULL);
     bbupdate();
     tl_reset_timer(maintimer);
     main_loop();
