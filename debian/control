@@ -3,15 +3,18 @@ Section: games
 Priority: optional
 Maintainer: Uwe Hermann <uwe@debian.org>
 Uploaders: Axel Beckert <abe@debian.org>
-Build-Depends: debhelper (>> 9), libmikmod-dev, libaa1-dev (>= 1.4p5-28), autotools-dev
+Build-Depends: autotools-dev,
+               debhelper (>> 9),
+               libaa1-dev (>= 1.4p5-28),
+               libmikmod-dev
 Standards-Version: 3.7.2.2
 Homepage: http://aa-project.sourceforge.net/bb/
 
 Package: bb
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${misc:Depends},
+         ${shlibs:Depends}
 Description: ASCII-art demo based on AAlib
  This package contains a 'high quality audio-visual demonstration'
  of ASCII-art using AAlib, a portable ASCII-art graphics library.
  This demonstration can be displayed in a text- or X11-terminal.
-

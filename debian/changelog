@@ -1,6 +1,7 @@
 bb (1.3rc1-9) UNRELEASED; urgency=medium
 
   * Add myself to Uploaders.
+  * Apply "wrap-and-sort -a".
 
  -- Axel Beckert <abe@debian.org>  Sat, 23 Jul 2016 03:31:20 +0200
 
