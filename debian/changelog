@@ -4,6 +4,10 @@ bb (1.3rc1-9) UNRELEASED; urgency=medium
   * Apply "wrap-and-sort -a".
   * Revamp debian/rules:
     + Use dh_auto_{configure,build,install,clean}.
+    + Remove now redundant removal of stamp files
+    + Remove parsing of DEB_BUILD_OPTIONS, it's now done automatically.
+    + Remove no more needed rpath mangling of generated Makefile.
+    + Finally switch to a minimal dh v7 style debian/rules file.
 
  -- Axel Beckert <abe@debian.org>  Sat, 23 Jul 2016 03:31:20 +0200
 
