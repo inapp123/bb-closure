@@ -12,6 +12,7 @@ bb (1.3rc1-9) UNRELEASED; urgency=medium
     + Assign changes to bug reports or changelog items where obvious.
   * Enabled all hardening build flags.
   * Add simple debian/watch file (no version mangling yet).
+  * Support parallel building.
 
  -- Axel Beckert <abe@debian.org>  Sat, 23 Jul 2016 03:31:20 +0200
 
