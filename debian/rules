@@ -26,7 +26,7 @@ endif
 config.status: configure
 	dh_testdir
 	dh_autotools-dev_updateconfig
-	./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --mandir=\$${prefix}/share/man --bindir=\$${prefix}/games --datadir=\$${prefix}/share
+	dh_auto_configure -- --bindir=\$${prefix}/games
 
 	# Don't use -rpath...
 	cat Makefile | sed 's/-Wl,-rpath,\/usr\/lib//g' > Makefile.new; sleep 1
@@ -37,14 +37,14 @@ build-arch: build-stamp
 build-indep: build-stamp
 build-stamp: config.status
 	dh_testdir
-	$(MAKE)
+	dh_auto_build
 	touch build-stamp
 
 clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp 
-	[ ! -f Makefile ] || $(MAKE) distclean
+	dh_auto_clean
 	dh_autotools-dev_restoreconfig
 	dh_clean 
 
@@ -53,7 +53,7 @@ install: build
 	dh_testroot
 	dh_prep
 	dh_installdirs
-	$(MAKE) install prefix=$(CURDIR)/debian/bb/usr
+	dh_auto_install
 
 # Build architecture-independent files here.
 binary-indep: build install
