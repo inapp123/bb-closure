@@ -1,0 +1,11 @@
+--- bb-1.3rc1.orig/julia.c
++++ bb-1.3rc1/julia.c
+@@ -40,7 +40,7 @@
+     int i, i1, i2, j, x, y, scanline = context->scanline;
+     int iter;
+     number_t rp = 0, ip = 0 /*, t */ ;
+-    register number_t zre, zim, im, xdelta, ydelta, br, tmp, range,
++    register number_t zre, zim, im, xdelta, ydelta, range,
+      rangep;
+     number_t xstep, ystep;
+     unsigned char *queue[QMAX];

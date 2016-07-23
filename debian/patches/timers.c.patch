@@ -1,0 +1,18 @@
+--- bb-1.3rc1.orig/timers.c
++++ bb-1.3rc1/timers.c
+@@ -306,6 +306,7 @@
+ #endif
+ #endif
+ }
++REGISTERS(3)
+ int
+ tl_lookup_timer (tl_timer * t)
+ {
+@@ -382,6 +383,7 @@
+ #endif
+ }
+ 
++REGISTERS(3)
+ void
+ tl_reset_timer (tl_timer * t)
+ {

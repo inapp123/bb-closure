@@ -8,6 +8,8 @@ bb (1.3rc1-9) UNRELEASED; urgency=medium
     + Remove parsing of DEB_BUILD_OPTIONS, it's now done automatically.
     + Remove no more needed rpath mangling of generated Makefile.
     + Finally switch to a minimal dh v7 style debian/rules file.
+  * Convert to source format "3.0 (quilt)" using diff2patches.
+    + Assign changes to bug reports or changelog items where obvious.
 
  -- Axel Beckert <abe@debian.org>  Sat, 23 Jul 2016 03:31:20 +0200
 

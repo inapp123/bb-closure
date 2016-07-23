@@ -306,7 +306,6 @@ __lookup_timer (tl_timer * t)
 #endif
 #endif
 }
-REGISTERS(3)
 int
 tl_lookup_timer (tl_timer * t)
 {
@@ -383,7 +382,6 @@ tl_sleep (int time)
 #endif
 }
 
-REGISTERS(3)
 void
 tl_reset_timer (tl_timer * t)
 {

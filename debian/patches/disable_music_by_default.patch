@@ -1,0 +1,19 @@
+Description: Disable music by default
+ This mitigates hanging visuals in combination with pulseaudio.
+Bug-Debian: https://bugs.debian.org/761023
+Author: Axel Beckert <abe@debian.org>
+
+--- bb-1.3rc1.orig/main.c
++++ bb-1.3rc1/main.c
+@@ -154,9 +155,9 @@
+ 
+   bbinit (argc, argv);
+ #ifdef HAVE_LIBMIKMOD
+-  aa_puts (context, 0, p++, AA_SPECIAL, "Music?[Y/n]");
++  aa_puts (context, 0, p++, AA_SPECIAL, "Music?[y/N]");
+   aa_flush (context);
+-  if (tolower (aa_getkey (context, 1)) != 'n')
++  if (tolower (aa_getkey (context, 1)) == 'y')
+     {
+       MikMod_RegisterAllDrivers ();
+       MikMod_RegisterLoader (&load_s3m);

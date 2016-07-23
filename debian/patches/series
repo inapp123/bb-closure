@@ -1,0 +1,10 @@
+add_-lm.patch
+README.patch
+bb.1.patch
+bb.c.patch
+julia.c.patch
+main.c.patch
+disable_music_by_default.patch
+tex.c.patch
+timers.c.patch
+zoom.c.patch

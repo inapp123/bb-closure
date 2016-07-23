@@ -1,0 +1,18 @@
+--- bb-1.3rc1.orig/zoom.c
++++ bb-1.3rc1/zoom.c
+@@ -1049,6 +1049,7 @@
+ 		rx++;
+ 	    }
+ 	    if (rs1 != NULL)
++	    {
+ 		if (n == 1) {
+ 		    for (; vbuff < vend; vbuff += d->scanline, vsrc += d->scanline)
+ 			*vbuff = *vsrc;
+@@ -1056,6 +1057,7 @@
+ 		    for (; vbuff < vend; vbuff += d->scanline, vsrc += d->scanline)
+ 			memset((char *) vbuff, (int) *vsrc, (size_t) n);
+ 		}
++	    }
+ 	}
+     }
+ }

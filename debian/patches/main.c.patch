@@ -1,0 +1,19 @@
+--- bb-1.3rc1.orig/main.c
++++ bb-1.3rc1/main.c
+@@ -21,6 +21,7 @@
+  * 675 Mass Ave, Cambridge, MA 02139, USA.
+  */
+ 
++#include <ctype.h>
+ #include <unistd.h>
+ #include "timers.h"
+ #include "bb.h"
+@@ -130,7 +131,7 @@
+ 
+ int cont;
+ int srate;
+-int
++void
+ ptable ()
+ {
+   int i;

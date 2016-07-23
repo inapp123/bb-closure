@@ -4,4 +4,3 @@ bb_SOURCES = autopilo.c backconv.c bb.c credits.c credits2.c ctrl87.c fk1.c fk2.
 pkgdata_DATA = @SOUNDFILES@
 EXTRA_DIST = README.LZO bb.s3m bb2.s3m bb3.s3m acconfig.h bb.lsm acconfig.h autopilo.h bb.h complex.h config.h ctrl87.h formulas.h image.h minilzo.h mylzo.h patnik.h tex.h timers.h torus.h ui.h zoom.h bb.1
 man_MANS = bb.1
-bb_LDADD = @LDADD@ -lm

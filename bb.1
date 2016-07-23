@@ -1,12 +1,17 @@
-.TH BB 1 "December 16, 2001"
+.TH NAME SECTION 
+.\" NAME should be all caps, SECTION should be 1-8, maybe w/ subsection
+.\" other parms are allowed: see man(7), man(1)
 .SH NAME
-bb \- an ASCII-art demo
+bb \- The aalib demo
 .SH SYNOPSIS
 .B bb
-.RB [ options ]
-.SH DESCRIPTION
-.B bb
-is a high quality audio-visual demonstration for your text terminal.
+.I "[options]"
+.br
+.SH "DESCRIPTION"
+The 
+.BR bb ,
+command show an high quality audio-visual demonstration for your text
+terminal
 .SH OPTIONS
 A summary of options are included below.
 For a complete description type 
@@ -17,121 +22,105 @@ For a complete description type
 Show summary of options.
 .TP
 .B \-loop
-Play demo in infinite loop.
+play demo in infinite loop
 .TP
 .B \-driver
-Select driver. Available drivers: linux, slang, X11, stdout, stderr.
+select driver available drivers:linux slang X11 stdout stderr
 .TP
 .B \-kbddriver
-Select keyboard driver. Available drivers: slang, X11, stdin.
+select keyboard driver available drivers:slang X11 stdin
 .TP
 .B \-mousedriver
-Select mouse driver. Available drivers: X11, gpm, dos.
+select mouse driver available drivers:X11 gpm dos
 .TP
 .B \-width
-Set width.
+set width
 .TP
 .B \-height
-Set height.
+set height
 .TP
 .B \-minwidth
-Set minimum width.
+set minimal width
 .TP
 .B \-minheight
-Set minimum height.
+set minimal height
 .TP
 .B \-maxwidth
-Set maximum width.
+set maximal width
 .TP
 .B \-maxheight
-Set maximum height.
+set maximal height
 .TP
 .B \-recwidth
-Set recommended width.
+set recomended width
 .TP
 .B \-recheight
-Set recommended height.
+set recomended height
 .TP
 .B \-dim
-Enable usage of dim (half bright) attribute.
+enable usage of dim (half bright) attribute
 .TP
 .B \-bold
-Enable usage of bold (double bright) attribute.
+enable usage of bold (double bright) attribute
 .TP
 .B \-reverse
-Enable usage of reverse attribute.
+enable usage of reverse attribute
 .TP
 .B \-normal
-Enable usage of normal attribute.
+enable usage of normal attribute
 .TP
 .B \-boldfont
-Enable usage of boldfont attribute.
+enable usage of boldfont attrubute
 .TP
 .B \-no<attr>
-Disable attribute (i.e
-.BR -nobold ).
+disable (i.e -nobold)
 .TP
 .B \-extended
-Use all 256 characters.
+use all 256 characters
 .TP
 .B \-eight
-Use eight bit ASCII.
+use eight bit ascii
 .TP
 .B \-font <font>
-Select font. This option is used on hardware where aalib is unable to
-determine the current font. Available fonts: vga8, vga9, mda14, vga14, X8x13,
-X8x16, X8x13bold, vgagl8, line.
+select font(This option have effect just on hardwares
+where aalib is unable to determine current font
+available fonts:vga8 vga9 mda14 vga14 X8x13 X8x16
+X8x13bold vgagl8 line
 .TP
 .B \-inverse
-Enable inverse rendering.
+enable inverse rendering
 .TP
 .B \-noinverse
-Disable inverse rendering.
+disable inverse rendering
 .TP
 .B \-bright <val>
-Set brightness (0-255).
+set bright (0-255)
 .TP
 .B \-contrast <val>
-Set contrast (0-255).
+set contrast (0-255)
 .TP
 .B \-gamma <val>
-Set gamma correction value (0-1).
+set gamma correction value(0-1)
 .TP
 .B \-nodither
-Disable dithering.
+disable dithering
 .TP
 .B \-floyd_steinberg
-Floyd-Steinberg dithering.
+floyd steinberg dithering
 .TP
 .B \-error_distribution
-Error distribution dithering.
+error distribution dithering
 .TP
 .B \-random <val>
-Set random dithering value (0-inf).
+set random dithering value(0-inf)
 .TP
 .B \-dimmul <val>
-Multiply factor for dim attribute (5.3).
+multiply factor for dim color (5.3)
 .TP
 .B \-boldmul <val>
-Multiply factor for bold attribute (2.7).
-.SH BUGS
-Please report any bugs you find to Jan Hubicka <hubicka@freesoft.cz>.
-.SH LICENCE
-.B bb
-is covered by the GNU General Public License (GPL).
+multiply factor for dim color (2.7)
 .SH SEE ALSO
-.BR aafire (1),
-.BR aainfo (1),
-.BR aasavefont (1),
-.BR aatest (1),
-.BR aview (1),
-.BR asciiview (1),
-.BR aaflip (1),
-.BR aa3d (1),
-.BR xaos (6),
-.BR aatv (1).
+See the files in /usr/doc/aalib*
 .SH AUTHOR
-Jan Hubicka <hubicka@freesoft.cz>
-.PP
 This manual page was written by Michael Bramer <grisu@debian.org>,
 for the Debian GNU/Linux system (but may be used by others).

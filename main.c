@@ -21,7 +21,6 @@
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <ctype.h>
 #include <unistd.h>
 #include "timers.h"
 #include "bb.h"
@@ -131,7 +130,7 @@ static struct table stable[] = { {DMODE_16BITS, "16 bit output"},
 
 int cont;
 int srate;
-void
+int
 ptable ()
 {
   int i;
@@ -155,9 +154,9 @@ main (int argc, char *argv[])
 
   bbinit (argc, argv);
 #ifdef HAVE_LIBMIKMOD
-  aa_puts (context, 0, p++, AA_SPECIAL, "Music?[y/N]");
+  aa_puts (context, 0, p++, AA_SPECIAL, "Music?[Y/n]");
   aa_flush (context);
-  if (tolower (aa_getkey (context, 1)) == 'y')
+  if (tolower (aa_getkey (context, 1)) != 'n')
     {
       MikMod_RegisterAllDrivers ();
       MikMod_RegisterLoader (&load_s3m);
