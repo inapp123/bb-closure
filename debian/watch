@@ -1,0 +1,2 @@
+version=4
+http://sf.net/aa-project/bb-(\d\S*)\.(?:zip|tgz|tbz|txz|(?:tar\.(?:gz|bz2|xz)))
