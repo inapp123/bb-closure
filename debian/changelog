@@ -10,6 +10,7 @@ bb (1.3rc1-9) UNRELEASED; urgency=medium
     + Finally switch to a minimal dh v7 style debian/rules file.
   * Convert to source format "3.0 (quilt)" using diff2patches.
     + Assign changes to bug reports or changelog items where obvious.
+  * Enabled all hardening build flags.
 
  -- Axel Beckert <abe@debian.org>  Sat, 23 Jul 2016 03:31:20 +0200
 
