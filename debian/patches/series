@@ -8,3 +8,4 @@ disable_music_by_default.patch
 tex.c.patch
 timers.c.patch
 zoom.c.patch
+fix-typos-in-messages.patch

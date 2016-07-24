@@ -1,0 +1,61 @@
+Description: Fix multiple spelling-error-in-binary found by lintian
+Author: Axel Beckert <abe@debian.org>
+
+--- a/textform.c
++++ b/textform.c
+@@ -50,7 +50,7 @@
+ "bb -loop -nodim -nobold -extended\n"
+ "bb -driver stdout -width 79\n"
+ "bb -driver stdout -width 79 > lpt1 (for some screenshots :)\n\n"
+-"The option #bfont#n is usefull on hardware where AA-Lib is unable to get current "
++"The option #bfont#n is useful on hardware where AA-Lib is unable to get current "
+ "font (like text terminals, mda etc..)\n\n"
+ "\n"
+ "Note: the most of this options are common to all #bAA Project#n programs.\n"
+@@ -146,7 +146,7 @@
+ "#bMamut#n\n"
+ "No smoking, please.\n"
+ "#bPurple Motion#n\n"
+-"Your INSIDE.S3M made me start writting music\n"
++"Your INSIDE.S3M made me start writing music\n"
+ "#bJeffrey Lim#n\n"
+ "Many thanx for Impulse Tracker\n"
+ "\n"
+@@ -189,7 +189,7 @@
+ "#l\n"
+ "#c#bAvailable programs#n\n"
+ "#c\n"
+-"#fThis part contains a listing of programs currently avilable for #bAA-Lib#n. Note that "
++"#fThis part contains a listing of programs currently available for #bAA-Lib#n. Note that "
+ "it is probably outdated now. So look at #bhttp://aa-project.sourceforge.net/#n to get latest information"
+ "#f\n\n\n\n"
+ "#c#b      dT8  8     dP \n"
+@@ -200,7 +200,7 @@
+ " dT     8  8XP Aview\n"
+ "\n\n#c#f#n"
+ "This has been historically the first program developed for AA-Lib. In fact it is even older than "
+-"AA-Lib itself and AA-Lib was later seperated from Aview sources. It was programmed to convert "
++"AA-Lib itself and AA-Lib was later separated from Aview sources. It was programmed to convert "
+ "Linux Texas group #bpenguin logo#n to #bascii art#n. It has become powerful #bimage browser#n soon. "
+ "It is extremly useful in combination of lynx-the best web browser. \n"
+ "\n"
+@@ -221,7 +221,7 @@
+ "#c\n"
+ "#fXaoS is a #bfast portable realtime interactive fractal zoomer/morpher#n. It was "
+ "the first program for AA routines in animation style. Current version (2.2) does not "
+-"contain fully featured support for AA-Lib but it uses its own simplier and less portable "
++"contain fully featured support for AA-Lib but it uses its own simpler and less portable "
+ "routines (it is older than AA-Lib). But AA driver will be available soon after releasing "
+ "BB. So check out XaoS homepage (http://www.tedium.com/XaoS) for more details "
+ "#f\n"
+@@ -264,8 +264,8 @@
+ "to ascii art using netpbm tools.\n"
+ "\n"
+ "The output was very ugly because the converting algorithm was absolutly stupid. \n"
+-"During the night I designed a new convertor that used a font bitmap for \n"
+-"creating aproximation table. The output wasn't very good since the algorithm \n"
++"During the night I designed a new converter that used a font bitmap for \n"
++"creating approximation table. The output wasn't very good since the algorithm \n"
+ "wasn't so well tuned. Many months this small piece of code was waiting on my \n"
+ "disc for the day \"D\". Meanwhile I started a new project XaoS (a fractal zoomer) \n"
+ "with my friend Thomas. And then I got an idea: Ascii Art Mandelbrots! \n"
