@@ -19,6 +19,7 @@ bb (1.3rc1-9) UNRELEASED; urgency=medium
     copyright years and owners.
   * debian/copyright: Update addresses of XaoS homepage and AAlib mailing
     lists. Issues reported by DUCK.
+  * Add Vcs-* headers for new collab-maint Git repository.
 
  -- Axel Beckert <abe@debian.org>  Sat, 23 Jul 2016 03:31:20 +0200
 

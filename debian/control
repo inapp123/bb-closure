@@ -9,6 +9,8 @@ Build-Depends: autotools-dev,
                libmikmod-dev
 Standards-Version: 3.9.8
 Homepage: http://aa-project.sourceforge.net/bb/
+Vcs-Git: https://anonscm.debian.org/git/collab-maint/bb.git
+Vcs-Browser: https://anonscm.debian.org/git/collab-maint/bb.git
 
 Package: bb
 Architecture: any
