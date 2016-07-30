@@ -10,3 +10,10 @@ export DEB_BUILD_MAINT_OPTIONS=hardening=+all
 
 override_dh_auto_configure:
 	dh_auto_configure -- --bindir=\$${prefix}/games
+
+override_dh_auto_install:
+	dh_auto_install
+	# Move man page from section 1 to section 6
+	mv -v debian/bb/usr/share/man/man1 debian/bb/usr/share/man/man6
+	mv -v debian/bb/usr/share/man/man6/bb.1 debian/bb/usr/share/man/man6/bb.6
+	sed -e "s/^\.TH BB 1 /.TH BB 6 /" -i debian/bb/usr/share/man/man6/bb.6

@@ -20,6 +20,9 @@ bb (1.3rc1-9) UNRELEASED; urgency=medium
   * debian/copyright: Update addresses of XaoS homepage and AAlib mailing
     lists. Issues reported by DUCK.
   * Add Vcs-* headers for new collab-maint Git repository.
+  * Move the bb man page from section 1 (normal programs) to section 6
+    (games) even though the file conflict with the xymon package (formerly
+    called hobbit) no more exists for years. (Closes: #441011)
 
  -- Axel Beckert <abe@debian.org>  Sat, 23 Jul 2016 03:31:20 +0200
 
