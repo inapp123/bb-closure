@@ -1,6 +1,7 @@
 bb (1.3rc1-9) UNRELEASED; urgency=medium
 
   * Add myself to Uploaders.
+  * Acknowledge NMUs. (Closes: #789525)
   * Apply "wrap-and-sort -a".
   * Revamp debian/rules:
     + Use dh_auto_{configure,build,install,clean}.
