@@ -1,4 +1,4 @@
-bb (1.3rc1-9) UNRELEASED; urgency=medium
+bb (1.3rc1-9) unstable; urgency=low
 
   * Add myself to Uploaders.
   * Acknowledge NMUs. (Closes: #789525)
@@ -25,7 +25,7 @@ bb (1.3rc1-9) UNRELEASED; urgency=medium
     (games) even though the file conflict with the xymon package (formerly
     called hobbit) no more exists for years. (Closes: #441011)
 
- -- Axel Beckert <abe@debian.org>  Sat, 23 Jul 2016 03:31:20 +0200
+ -- Axel Beckert <abe@debian.org>  Sat, 30 Jul 2016 22:26:57 +0200
 
 bb (1.3rc1-8.5) unstable; urgency=medium
 
