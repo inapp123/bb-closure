@@ -32,6 +32,13 @@ License: public-domain
   released as public domain.
 Comment: The packaging was redone in 2001.
 
+Files: debian/bb.png
+Copyright: 1997 AA-group <aa-project-aa-lib@lists.sourceforge.net>
+License: GPL-2+
+Comment: This file is a conversion of
+ http://aa-project.sourceforge.net/bb/bb.jpg to PNG and 128x128 pixels
+ size using graphicsmagick-imagemagick-compat's convert tool.
+
 License: GPL-2+
  This package is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
