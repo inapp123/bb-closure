@@ -9,3 +9,4 @@ tex.c.patch
 timers.c.patch
 zoom.c.patch
 fix-typos-in-messages.patch
+fix-implicit-declaration.patch

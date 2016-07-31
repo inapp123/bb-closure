@@ -1,0 +1,15 @@
+Description: Fix implicit declaration of strlen in main.c
+ Reported by the build log scanner.
+Bug-Debian: https://qa.debian.org/bls/bytag/W-implicit-declaration.html
+Author: Axel Beckert <abe@debian.org>
+
+--- a/main.c
++++ b/main.c
+@@ -23,6 +23,7 @@
+ 
+ #include <ctype.h>
+ #include <unistd.h>
++#include <string.h>
+ #include "timers.h"
+ #include "bb.h"
+ #ifdef HAVE_LIBMIKMOD
