@@ -2,6 +2,9 @@ bb (1.3rc1-10) UNRELEASED; urgency=medium
 
   * Add patch to fix implicit declaration of strlen in main.c. (Reported
     by the build log scanner.)
+  * Add desktop file. (Closes: #737826)
+    + Add image from http://aa-project.sourceforge.net/bb/bb.jpg
+      (converted to PNG and resized to 128x128) for use as menu icon.
 
  -- Axel Beckert <abe@debian.org>  Sun, 31 Jul 2016 17:07:10 +0200
 

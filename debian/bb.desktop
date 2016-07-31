@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=BB
+Comment=an ASCII-art demo
+Exec=bb
+Icon=bb
+Keywords=demo;ascii;art
+Terminal=false
+Categories=Game;2DGraphics;Graphics;Art;Amusement
