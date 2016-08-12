@@ -1,2 +1,2 @@
 debian/bb.desktop usr/share/applications/
-debian/bb.png usr/share/pixmaps/
+debian/bb.png usr/share/icons/hicolor/128x128/apps/
