@@ -1,3 +1,9 @@
+bb (1.3rc1-11) UNRELEASED; urgency=medium
+
+  * Remove trailing whitespace from ancient debian/changelog entry.
+
+ -- Axel Beckert <abe@debian.org>  Sat, 30 Dec 2017 06:35:07 +0100
+
 bb (1.3rc1-10) unstable; urgency=medium
 
   * Add patch to fix implicit declaration of strlen in main.c. (Reported
@@ -288,7 +294,7 @@ bb (1.2-3) unstable; urgency=low
 
 bb (1.2-2) unstable; urgency=low
 
-  * add '-u' to debstd 
+  * add '-u' to debstd
   * correct the maintainer address
 
  -- Michael Bramer <grisu@debian.org>  Sat, 15 Aug 1998 09:51:37 +0200
