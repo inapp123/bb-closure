@@ -1,4 +1,4 @@
-bb (1.3rc1-11) UNRELEASED; urgency=medium
+bb (1.3rc1-11) unstable; urgency=medium
 
   * Remove trailing whitespace from ancient debian/changelog entry.
   * Declare compliance with Debian Policy 4.1.3.
@@ -14,7 +14,7 @@ bb (1.3rc1-11) UNRELEASED; urgency=medium
   * Set "Rules-Requires-Root: no".
   * Update Vcs-* headers for switch to salsa.debian.org.
 
- -- Axel Beckert <abe@debian.org>  Sat, 30 Dec 2017 06:35:07 +0100
+ -- Axel Beckert <abe@debian.org>  Tue, 02 Jan 2018 15:39:17 +0100
 
 bb (1.3rc1-10) unstable; urgency=medium
 
