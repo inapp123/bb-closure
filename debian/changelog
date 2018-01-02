@@ -11,6 +11,7 @@ bb (1.3rc1-11) UNRELEASED; urgency=medium
     + Drop "--with autotools-dev --parallel" from debian/rules.
     + Drop build-dependency on autotools-dev.
     + Update debian/patches/add_-lm.patch to work with autoreconf.
+  * Set "Rules-Requires-Root: no".
 
  -- Axel Beckert <abe@debian.org>  Sat, 30 Dec 2017 06:35:07 +0100
 

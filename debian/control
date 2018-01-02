@@ -10,6 +10,7 @@ Standards-Version: 4.1.3
 Homepage: http://aa-project.sourceforge.net/bb/
 Vcs-Git: https://anonscm.debian.org/git/collab-maint/bb.git
 Vcs-Browser: https://anonscm.debian.org/git/collab-maint/bb.git
+Rules-Requires-Root: no
 
 Package: bb
 Architecture: any
