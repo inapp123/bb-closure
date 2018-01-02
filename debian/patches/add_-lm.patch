@@ -1,25 +1,16 @@
 Description: Add -lm
  Fixes FTBFS.
 Author: Bhavani Shankar R <bhavi@ubuntu.com>
+Author: Axel Beckert <abe@debian.org>
 Reviewed-By: Bart Martens <bartm@debian.org>
 Bug-Debian: https://bugs.debian.org/553954
 Bug-Debian: https://bugs.debian.org/608869
+Last-Update: 2018-01-02
 
---- bb-1.3rc1.orig/Makefile.in
-+++ bb-1.3rc1/Makefile.in
-@@ -94,7 +94,7 @@
- ms3.o ms4.o print.o scene1.o scene2.o scene3.o scene4.o scene5.o \
- scene7.o scene8.o scene9.o tex.o textform.o timers.o uncompfn.o zeb.o \
- zoom.o
--bb_LDADD = $(LDADD)
-+bb_LDADD = $(LDADD) -lm
- bb_DEPENDENCIES = 
- bb_LDFLAGS = 
- COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 --- bb-1.3rc1.orig/Makefile.am
 +++ bb-1.3rc1/Makefile.am
 @@ -4,3 +4,4 @@
  pkgdata_DATA = @SOUNDFILES@
  EXTRA_DIST = README.LZO bb.s3m bb2.s3m bb3.s3m acconfig.h bb.lsm acconfig.h autopilo.h bb.h complex.h config.h ctrl87.h formulas.h image.h minilzo.h mylzo.h patnik.h tex.h timers.h torus.h ui.h zoom.h bb.1
  man_MANS = bb.1
-+bb_LDADD = @LDADD@ -lm
++bb_LDADD = $(LDADD) -lm

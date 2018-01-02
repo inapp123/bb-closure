@@ -3,8 +3,7 @@ Section: games
 Priority: optional
 Maintainer: Uwe Hermann <uwe@debian.org>
 Uploaders: Axel Beckert <abe@debian.org>
-Build-Depends: autotools-dev,
-               debhelper (>> 9),
+Build-Depends: debhelper (>= 11~),
                libaa1-dev (>= 1.4p5-28),
                libmikmod-dev
 Standards-Version: 4.1.3
