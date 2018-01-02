@@ -1,7 +1,8 @@
 bb (1.3rc1-11) UNRELEASED; urgency=medium
 
   * Remove trailing whitespace from ancient debian/changelog entry.
-  * Declare compliance with Debian Policy 4.1.3. (No changes needed.)
+  * Declare compliance with Debian Policy 4.1.3.
+    + Change debian/copyright DEP5 format URL to HTTPS.
   * Extend debian/patches/fix-typos-in-messages.patch to fix some more
     typos.
 
