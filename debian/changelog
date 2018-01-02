@@ -5,6 +5,7 @@ bb (1.3rc1-11) UNRELEASED; urgency=medium
     + Change debian/copyright DEP5 format URL to HTTPS.
   * Extend debian/patches/fix-typos-in-messages.patch to fix some more
     typos.
+  * Add debian/duck-overrides to silence DUCK false positives.
 
  -- Axel Beckert <abe@debian.org>  Sat, 30 Dec 2017 06:35:07 +0100
 
