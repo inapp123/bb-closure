@@ -21,6 +21,15 @@ Author: Axel Beckert <abe@debian.org>
  "#bJeffrey Lim#n\n"
  "Many thanx for Impulse Tracker\n"
  "\n"
+@@ -162,7 +162,7 @@
+ "3)Force IBM to start manufacturing MDA cards again.\n"
+ "\n"
+ "AA-project was started by Jan Hubicka. In that times just few people knew about \n"
+-"it. Then a new demo named BB has been relased to show the power \n"
++"it. Then a new demo named BB has been released to show the power \n"
+ "of AA-lib technology. Now the project is freely available and anyone can help.\n"
+ "\n"
+ "Just browse our homepage at #bhttp://aa-project.sourceforge.net/#n. Ton of \n"
 @@ -189,7 +189,7 @@
  "#l\n"
  "#c#bAvailable programs#n\n"
@@ -30,15 +39,18 @@ Author: Axel Beckert <abe@debian.org>
  "it is probably outdated now. So look at #bhttp://aa-project.sourceforge.net/#n to get latest information"
  "#f\n\n\n\n"
  "#c#b      dT8  8     dP \n"
-@@ -200,7 +200,7 @@
+@@ -200,9 +200,9 @@
  " dT     8  8XP Aview\n"
  "\n\n#c#f#n"
  "This has been historically the first program developed for AA-Lib. In fact it is even older than "
 -"AA-Lib itself and AA-Lib was later seperated from Aview sources. It was programmed to convert "
 +"AA-Lib itself and AA-Lib was later separated from Aview sources. It was programmed to convert "
  "Linux Texas group #bpenguin logo#n to #bascii art#n. It has become powerful #bimage browser#n soon. "
- "It is extremly useful in combination of lynx-the best web browser. \n"
+-"It is extremly useful in combination of lynx-the best web browser. \n"
++"It is extremely useful in combination of lynx-the best web browser. \n"
  "\n"
+ "Aview has some extended features (including text mode of course) "
+ "most notably: possibility to #bsave various text formats#n including #bHTML, ANSI "
 @@ -221,7 +221,7 @@
  "#c\n"
  "#fXaoS is a #bfast portable realtime interactive fractal zoomer/morpher#n. It was "
@@ -59,3 +71,25 @@ Author: Axel Beckert <abe@debian.org>
  "wasn't so well tuned. Many months this small piece of code was waiting on my \n"
  "disc for the day \"D\". Meanwhile I started a new project XaoS (a fractal zoomer) \n"
  "with my friend Thomas. And then I got an idea: Ascii Art Mandelbrots! \n"
+--- a/README
++++ b/README
+@@ -54,7 +54,7 @@
+   3. Force IBM to start manufacturing MDA cards again.
+ 
+ AA-project was started by Jan Hubicka. Back then just a few
+-people knew about it. Then a new demo named BB had been relased to show
++people knew about it. Then a new demo named BB had been released to show
+ the power of AA-lib technology. Now the project is freely available and
+ anyone can help.
+ 
+--- a/bb.c
++++ b/bb.c
+@@ -345,7 +345,7 @@
+ 		     "\n"
+ 		     "1991 - Installed underground hackers OS Linux\n"
+ 		     "1995 - Headed Action 'koules'\n"
+-		     "1996 - Famous troan XaoS to convert all windows instalations\n"
++		     "1996 - Famous trojan XaoS to convert all Windows installations\n"
+ 		     "       into Linux\n"
+ 		     "\n"
+ 		     "1998 - Secret plan to make `Text Windows` system to confuse users\n"

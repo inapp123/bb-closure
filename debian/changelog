@@ -2,6 +2,8 @@ bb (1.3rc1-11) UNRELEASED; urgency=medium
 
   * Remove trailing whitespace from ancient debian/changelog entry.
   * Declare compliance with Debian Policy 4.1.3. (No changes needed.)
+  * Extend debian/patches/fix-typos-in-messages.patch to fix some more
+    typos.
 
  -- Axel Beckert <abe@debian.org>  Sat, 30 Dec 2017 06:35:07 +0100
 
