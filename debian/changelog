@@ -14,6 +14,7 @@ bb (1.3rc1-12) UNRELEASED; urgency=medium
   * Add lintian override for upstream-metadata-file-is-missing. The only
     field we could put in there would be the redundant Homepage field.
   * Extend patches to fix another typo in upstream documentation and code.
+  * Refresh disable_music_by_default.patch. Had an offset of 1 line.
 
  -- Axel Beckert <abe@debian.org>  Sat, 16 Jan 2021 16:47:06 +0100
 

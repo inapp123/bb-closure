@@ -3,9 +3,9 @@ Description: Disable music by default
 Bug-Debian: https://bugs.debian.org/761023
 Author: Axel Beckert <abe@debian.org>
 
---- bb-1.3rc1.orig/main.c
-+++ bb-1.3rc1/main.c
-@@ -154,9 +155,9 @@
+--- a/main.c
++++ b/main.c
+@@ -155,9 +155,9 @@
  
    bbinit (argc, argv);
  #ifdef HAVE_LIBMIKMOD
