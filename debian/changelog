@@ -3,6 +3,10 @@ bb (1.3rc1-12) UNRELEASED; urgency=medium
   [ Ondřej Nový ]
   * ddebian/watch: Use HTTPS protocol
 
+  [ Axel Beckert ]
+  * Bump debhelper compatibility level to 13.
+    + Build-depend on "debhelper-compat (= 13)" to replace debian/compat.
+
  -- Axel Beckert <abe@debian.org>  Sat, 16 Jan 2021 16:47:06 +0100
 
 bb (1.3rc1-11) unstable; urgency=medium
