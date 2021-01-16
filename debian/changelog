@@ -11,6 +11,8 @@ bb (1.3rc1-12) UNRELEASED; urgency=medium
     + Also fixes lintian warning broken-lzo.
   * Declare compliance with Debian Policy 4.5.1. (No changes needed.)
   * Bump package maintainer copyright years in debian/copyright.
+  * Add lintian override for upstream-metadata-file-is-missing. The only
+    field we could put in there would be the redundant Homepage field.
 
  -- Axel Beckert <abe@debian.org>  Sat, 16 Jan 2021 16:47:06 +0100
 
