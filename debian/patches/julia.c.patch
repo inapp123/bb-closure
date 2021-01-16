@@ -1,3 +1,5 @@
+Description: Extracted from 1.3rc1-8.5's .diff.gz by diff2patches
+
 --- bb-1.3rc1.orig/julia.c
 +++ bb-1.3rc1/julia.c
 @@ -40,7 +40,7 @@

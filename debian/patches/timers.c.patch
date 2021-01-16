@@ -1,3 +1,5 @@
+Description: Extracted from 1.3rc1-8.5's .diff.gz by diff2patches
+
 --- bb-1.3rc1.orig/timers.c
 +++ bb-1.3rc1/timers.c
 @@ -306,6 +306,7 @@

@@ -15,6 +15,9 @@ bb (1.3rc1-12) UNRELEASED; urgency=medium
     field we could put in there would be the redundant Homepage field.
   * Extend patches to fix another typo in upstream documentation and code.
   * Refresh disable_music_by_default.patch. Had an offset of 1 line.
+  * debian/patches/*.c.patch: Add minimal DEP3 patch description stating
+    that the patch was extracted from 1.3rc1-8.5's .diff.gz by
+    diff2patches. Fixes lintian warning quilt-patch-missing-description.
 
  -- Axel Beckert <abe@debian.org>  Sat, 16 Jan 2021 16:47:06 +0100
 
