@@ -9,6 +9,7 @@ bb (1.3rc1-12) UNRELEASED; urgency=medium
   * Don't install README.LZO into the binary package.
     + It's no end-user documentation.
     + Also fixes lintian warning broken-lzo.
+  * Declare compliance with Debian Policy 4.5.1. (No changes needed.)
 
  -- Axel Beckert <abe@debian.org>  Sat, 16 Jan 2021 16:47:06 +0100
 
