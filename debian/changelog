@@ -6,6 +6,9 @@ bb (1.3rc1-12) UNRELEASED; urgency=medium
   [ Axel Beckert ]
   * Bump debhelper compatibility level to 13.
     + Build-depend on "debhelper-compat (= 13)" to replace debian/compat.
+  * Don't install README.LZO into the binary package.
+    + It's no end-user documentation.
+    + Also fixes lintian warning broken-lzo.
 
  -- Axel Beckert <abe@debian.org>  Sat, 16 Jan 2021 16:47:06 +0100
 
