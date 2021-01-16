@@ -18,6 +18,7 @@ bb (1.3rc1-12) UNRELEASED; urgency=medium
   * debian/patches/*.c.patch: Add minimal DEP3 patch description stating
     that the patch was extracted from 1.3rc1-8.5's .diff.gz by
     diff2patches. Fixes lintian warning quilt-patch-missing-description.
+  * Also mention #123150 in README.Debian with regards to PulseAudio.
 
  -- Axel Beckert <abe@debian.org>  Sat, 16 Jan 2021 16:47:06 +0100
 

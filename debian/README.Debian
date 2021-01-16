@@ -17,6 +17,6 @@ you can do that by either:
   pasuspender -- env PULSE_SERVER= bb
 
 This issue is tracked in the Debian Bug Tracking System at
-https://bugs.debian.org/761023
+https://bugs.debian.org/123150 and https://bugs.debian.org/761023
 
  -- Axel Beckert <abe@debian.org>, Sat, 11 Apr 2015 15:22:37 +0200
