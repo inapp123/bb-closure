@@ -43,7 +43,7 @@ Author: Uwe Hermann <uh1763@hermann-uwe.de>
 -absolutly stupid.  During the night I designed a new convertor that
 -used a font bitmap to creat an aproximation table. The output wasn't
 +The output was very ugly because the converting algorithm was
-+absolutly stupid. During the night I designed a new converter that
++absolutely stupid. During the night I designed a new converter that
 +used a font bitmap to create an approximation table. The output wasn't
  very good since the algorithm wasn't tuned so well. Many months this
  small piece of code was waiting on my disc for the day "D". Meanwhile I

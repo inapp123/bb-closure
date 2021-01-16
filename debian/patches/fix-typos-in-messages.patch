@@ -60,12 +60,14 @@ Author: Axel Beckert <abe@debian.org>
  "routines (it is older than AA-Lib). But AA driver will be available soon after releasing "
  "BB. So check out XaoS homepage (http://www.tedium.com/XaoS) for more details "
  "#f\n"
-@@ -264,8 +264,8 @@
+@@ -263,9 +263,9 @@
+ "- Hercules doesn't support color graphics. So we decided to convert an image \n"
  "to ascii art using netpbm tools.\n"
  "\n"
- "The output was very ugly because the converting algorithm was absolutly stupid. \n"
+-"The output was very ugly because the converting algorithm was absolutly stupid. \n"
 -"During the night I designed a new convertor that used a font bitmap for \n"
 -"creating aproximation table. The output wasn't very good since the algorithm \n"
++"The output was very ugly because the converting algorithm was absolutely stupid. \n"
 +"During the night I designed a new converter that used a font bitmap for \n"
 +"creating approximation table. The output wasn't very good since the algorithm \n"
  "wasn't so well tuned. Many months this small piece of code was waiting on my \n"
