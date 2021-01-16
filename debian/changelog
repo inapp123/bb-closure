@@ -10,6 +10,7 @@ bb (1.3rc1-12) UNRELEASED; urgency=medium
     + It's no end-user documentation.
     + Also fixes lintian warning broken-lzo.
   * Declare compliance with Debian Policy 4.5.1. (No changes needed.)
+  * Bump package maintainer copyright years in debian/copyright.
 
  -- Axel Beckert <abe@debian.org>  Sat, 16 Jan 2021 16:47:06 +0100
 
