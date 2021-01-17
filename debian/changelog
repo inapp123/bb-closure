@@ -1,7 +1,7 @@
-bb (1.3rc1-12) UNRELEASED; urgency=medium
+bb (1.3rc1-12) unstable; urgency=medium
 
   [ Ondřej Nový ]
-  * ddebian/watch: Use HTTPS protocol
+  * debian/watch: Use HTTPS protocol.
 
   [ Axel Beckert ]
   * Bump debhelper compatibility level to 13.
@@ -18,9 +18,9 @@ bb (1.3rc1-12) UNRELEASED; urgency=medium
   * debian/patches/*.c.patch: Add minimal DEP3 patch description stating
     that the patch was extracted from 1.3rc1-8.5's .diff.gz by
     diff2patches. Fixes lintian warning quilt-patch-missing-description.
-  * Update README.Debian with regards to temporartily disable PulseAudio.
+  * Update README.Debian with regards to temporarily disabling PulseAudio.
 
- -- Axel Beckert <abe@debian.org>  Sat, 16 Jan 2021 16:47:06 +0100
+ -- Axel Beckert <abe@debian.org>  Sun, 17 Jan 2021 01:21:11 +0100
 
 bb (1.3rc1-11) unstable; urgency=medium
 
