@@ -7,7 +7,7 @@ Build-Depends: debhelper-compat (= 13),
                libaa1-dev (>= 1.4p5-28),
                libmikmod-dev
 Standards-Version: 4.5.1
-Homepage: http://aa-project.sourceforge.net/bb/
+Homepage: https://aa-project.sourceforge.net/bb/
 Vcs-Git: https://salsa.debian.org/debian/bb.git
 Vcs-Browser: https://salsa.debian.org/debian/bb
 Rules-Requires-Root: no
