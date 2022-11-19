@@ -1,3 +1,10 @@
+bb (1.3rc1-13) UNRELEASED; urgency=medium
+
+  * Use secure URI in Homepage field.
+  * Update standards version to 4.6.1, no changes needed.
+
+ -- Debian Janitor <janitor@jelmer.uk>  Tue, 15 Nov 2022 02:56:24 -0000
+
 bb (1.3rc1-12) unstable; urgency=medium
 
   [ Ondřej Nový ]
