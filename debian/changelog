@@ -1,4 +1,4 @@
-bb (1.3rc1-13) UNRELEASED; urgency=medium
+bb (1.3rc1-13) unstable; urgency=medium
 
   [ Debian Janitor ]
   * Use secure URI in Homepage field.
@@ -9,7 +9,7 @@ bb (1.3rc1-13) UNRELEASED; urgency=medium
     binary files.
   * Bump packaging copyright years in debian/copyright. Thanks Lintian!
 
- -- Axel Beckert <abe@debian.org>  Sun, 20 Nov 2022 21:07:59 +0100
+ -- Axel Beckert <abe@debian.org>  Sun, 20 Nov 2022 21:15:56 +0100
 
 bb (1.3rc1-12) unstable; urgency=medium
 
