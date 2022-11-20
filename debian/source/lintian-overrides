@@ -1,2 +1,5 @@
 # The only field we could put in there would be the redundant Homepage field
 source: upstream-metadata-file-is-missing
+
+# Binary file
+bb source: very-long-line-length-in-source-file * > 512 [*.s3m:*]
