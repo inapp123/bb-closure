@@ -22,6 +22,8 @@
  */
 
 #include <unistd.h>
+#include <string.h>
+#include <ctype.h>
 #include "timers.h"
 #include "bb.h"
 #ifdef HAVE_LIBMIKMOD
