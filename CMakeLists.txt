@@ -7,6 +7,14 @@ include(CheckTypeSize)
 include(CheckSymbolExists)
 include(GNUInstallDirs)
 
+option(SANITIZE_ADDRESS "Enable address sanitizer" OFF)
+
+if(SANITIZE_ADDRESS)
+    message(STATUS "Enabling address sanitizer")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address -g")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
+endif()
+
 # ── Feature detection ────────────────────────────────────────────────
 
 # Headers

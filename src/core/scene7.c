@@ -507,8 +507,11 @@ void scene6(void)
     main_loop();
     starttime = endtime;
     context->imagebuffer = buffer1;
+    free_context(zcontext);
+    zcontext = NULL;
     free(buffer2);
     tl_free_timer(maintimer);
+    maintimer = NULL;
     params->bright = 0;
     params->randomval = 0;
     initlepic();
@@ -525,7 +528,10 @@ void scene7(void)
     int width, height, scanline;
     int i, formula = 0;
     char *buffer1;
+    displayed = 0;
+    incalculation = 0;
     signal(SIGFPE, SIG_IGN);
+    maintimer = tl_create_timer();
     width = aa_imgwidth(context);
     height = aa_imgheight(context);
     scanline = width;
@@ -580,6 +586,10 @@ void scene7(void)
     re = -5.0;
     timestuff(0, NULL, juliov, ETIME2);
     context->imagebuffer = buffer1;
+    free_context(zcontext);
+    zcontext = NULL;
+    tl_free_timer(maintimer);
+    maintimer = NULL;
     params->bright = 0;
     params->dither = AA_FLOYD_S;
 }
