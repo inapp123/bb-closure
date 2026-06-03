@@ -24,6 +24,7 @@ check_include_file(malloc.h     HAVE_MALLOC_H)
 check_include_file(sys/ioctl.h  HAVE_SYS_IOCTL_H)
 check_include_file(sys/time.h   HAVE_SYS_TIME_H)
 check_include_file(unistd.h     HAVE_UNISTD_H)
+check_include_file(linux/fb.h   HAVE_LINUX_FB_H)
 check_include_file(inttypes.h   HAVE_INTTYPES_H)
 check_include_file(stdint.h     HAVE_STDINT_H)
 check_include_file(stdio.h      HAVE_STDIO_H)
@@ -68,16 +69,93 @@ if(HAVE_STDLIB_H AND HAVE_STDARG_H AND HAVE_STRING_H AND HAVE_FLOAT_H)
     set(STDC_HEADERS 1)
 endif()
 
-# ── Required: AA-lib ─────────────────────────────────────────────────
+# ── Bundled AA-lib (stdout/stderr + optional fbdev backend) ───────────
+#
+# We compile a stripped-down copy of aalib from the in-tree aalib/ directory.
+# The always-on backends are stdout/stderr display + stdin keyboard.
+# On Linux with <linux/fb.h>, we also compile a native fbdev backend that
+# uses only kernel ioctls + mmap (no extra user-space dependencies).
+# Other backends (X11, curses, slang, Linux console, gpm mouse, DOS, OS/2)
+# are intentionally excluded so that bb has no external aalib dependency.
 
-find_path(AALIB_INCLUDE_DIR aalib.h)
-find_library(AALIB_LIBRARY NAMES aa)
+set(AALIB_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/aalib/src)
 
-if(NOT AALIB_INCLUDE_DIR OR NOT AALIB_LIBRARY)
-    message(FATAL_ERROR "AA-lib (aalib) >= 1.4.0 not found. Please install libaa-dev.")
+set(AALIB_SOURCES
+    # core
+    ${AALIB_SRC_DIR}/aalib.c
+    ${AALIB_SRC_DIR}/aaregist.c      # display driver registry (stdout + stderr)
+    ${AALIB_SRC_DIR}/aakbdreg.c      # kbd driver registry (stdin)
+    # display backends (only stdout / stderr)
+    ${AALIB_SRC_DIR}/aastdout.c
+    ${AALIB_SRC_DIR}/aafbdev.c
+    # kbd backend
+    ${AALIB_SRC_DIR}/aastdin.c
+    # in-memory / save drivers
+    ${AALIB_SRC_DIR}/aamem.c
+    ${AALIB_SRC_DIR}/aasave.c
+    # helpers / rendering core
+    ${AALIB_SRC_DIR}/aaattrs.c
+    ${AALIB_SRC_DIR}/aacurrfnt.c
+    ${AALIB_SRC_DIR}/aaedit.c
+    ${AALIB_SRC_DIR}/aafastre.c
+    ${AALIB_SRC_DIR}/aaflush.c
+    ${AALIB_SRC_DIR}/aafont.c
+    ${AALIB_SRC_DIR}/aafonts.c
+    ${AALIB_SRC_DIR}/aahelp.c
+    ${AALIB_SRC_DIR}/aaimage.c
+    ${AALIB_SRC_DIR}/aaimgheight.c
+    ${AALIB_SRC_DIR}/aaimgwidth.c
+    ${AALIB_SRC_DIR}/aain.c
+    ${AALIB_SRC_DIR}/aammheight.c
+    ${AALIB_SRC_DIR}/aammwidth.c
+    ${AALIB_SRC_DIR}/aamktabl.c
+    ${AALIB_SRC_DIR}/aaout.c
+    ${AALIB_SRC_DIR}/aaparse.c
+    ${AALIB_SRC_DIR}/aaprintf.c
+    ${AALIB_SRC_DIR}/aaputpixel.c
+    ${AALIB_SRC_DIR}/aarec.c
+    ${AALIB_SRC_DIR}/aarecfunc.c
+    ${AALIB_SRC_DIR}/aarender.c
+    ${AALIB_SRC_DIR}/aascrheight.c
+    ${AALIB_SRC_DIR}/aascrwidth.c
+    ${AALIB_SRC_DIR}/aatext.c
+    ${AALIB_SRC_DIR}/aavyhen.c
+    # fonts
+    ${AALIB_SRC_DIR}/font8.c
+    ${AALIB_SRC_DIR}/font9.c
+    ${AALIB_SRC_DIR}/font14.c
+    ${AALIB_SRC_DIR}/font16.c
+    ${AALIB_SRC_DIR}/fontcour.c
+    ${AALIB_SRC_DIR}/fontgl.c
+    ${AALIB_SRC_DIR}/fontline.c
+    ${AALIB_SRC_DIR}/fontx13.c
+    ${AALIB_SRC_DIR}/fontx13b.c
+    ${AALIB_SRC_DIR}/fontx16.c
+)
+
+add_library(aa STATIC ${AALIB_SOURCES})
+target_include_directories(aa PUBLIC ${AALIB_SRC_DIR})
+# Silence warnings inside the legacy aalib code so they don't drown out ours.
+# Newer gcc promotes a few legacy K&R-style issues to errors; downgrade them.
+target_compile_options(aa PRIVATE
+    -w
+    -Wno-error=implicit-function-declaration
+    -Wno-error=implicit-int
+    -Wno-error=int-conversion
+    -Wno-error=incompatible-pointer-types
+)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND HAVE_LINUX_FB_H)
+    target_compile_definitions(aa PRIVATE FBDEV_DRIVER)
 endif()
 
-message(STATUS "Found AA-lib: ${AALIB_LIBRARY}")
+set(AALIB_INCLUDE_DIR ${AALIB_SRC_DIR})
+set(AALIB_LIBRARY aa)
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND HAVE_LINUX_FB_H)
+    message(STATUS "Using bundled AA-lib (stdout/stderr + fbdev backends)")
+else()
+    message(STATUS "Using bundled AA-lib (stdout/stderr backends only)")
+endif()
 
 # ── Optional: libmikmod ─────────────────────────────────────────────
 
@@ -128,10 +206,16 @@ set(BB_SOURCES
     src/zoom/autopilo.c
     src/zoom/ctrl87.c
     # effects (compressed image data)
-    src/effects/fk1.c   src/effects/fk2.c   src/effects/fk3.c   src/effects/fk4.c
-    src/effects/hh1.c   src/effects/hh2.c   src/effects/hh3.c   src/effects/hh4.c
-    src/effects/kt1.c   src/effects/kt2.c   src/effects/kt3.c   src/effects/kt4.c
-    src/effects/ms1.c   src/effects/ms2.c   src/effects/ms3.c   src/effects/ms4.c
+    # src/effects/fk1.c   src/effects/fk2.c   src/effects/fk3.c   src/effects/fk4.c
+    # src/effects/hh1.c   src/effects/hh2.c   src/effects/hh3.c   src/effects/hh4.c
+    # src/effects/kt1.c   src/effects/kt2.c   src/effects/kt3.c   src/effects/kt4.c
+    # src/effects/ms1.c   src/effects/ms2.c   src/effects/ms3.c   src/effects/ms4.c
+
+    src/effects/clo1.c src/effects/clo2.c src/effects/clo3.c src/effects/clo4.c
+    src/effects/kal1.c src/effects/kal2.c src/effects/kal3.c src/effects/kal4.c
+    src/effects/doc1.c src/effects/doc2.c src/effects/doc3.c src/effects/doc4.c
+    src/effects/ami1.c src/effects/ami2.c src/effects/ami3.c src/effects/ami4.c
+
     src/effects/zeb.c
     # tex (3D object rendering)
     src/tex/tex.c

@@ -10,10 +10,9 @@ Each person has 4 photos (e.g. fk1, fk2, fk3, fk4).
 """
 
 import argparse
-import sys
+import subprocess
 from pathlib import Path
 
-import lzo
 from PIL import Image
 
 
@@ -46,19 +45,59 @@ HEADER = """\
 """
 
 
-def image_to_c(image_path: str, name: str, height: int = 200) -> str:
-    img = Image.open(image_path).convert("L")
+MINILZO_DIR = Path(__file__).resolve().parent.parent / "src" / "lzo"
+COMPRESSOR_SRC = Path(__file__).resolve().parent / "minilzo_compress.c"
+COMPRESSOR_BIN = Path(__file__).resolve().parent / "minilzo_compress"
 
-    # Scale to target height, keep aspect ratio
+
+def ensure_compressor() -> Path:
+    """Build the minilzo compressor used by the BB demo decompressor."""
+    needs_build = not COMPRESSOR_BIN.exists()
+    if not needs_build:
+        src_mtime = max(COMPRESSOR_SRC.stat().st_mtime, (MINILZO_DIR / "minilzo.c").stat().st_mtime)
+        needs_build = COMPRESSOR_BIN.stat().st_mtime < src_mtime
+    if needs_build:
+        subprocess.run(
+            [
+                "gcc",
+                "-O2",
+                str(COMPRESSOR_SRC),
+                str(MINILZO_DIR / "minilzo.c"),
+                f"-I{MINILZO_DIR}",
+                "-o",
+                str(COMPRESSOR_BIN),
+            ],
+            check=True,
+        )
+    return COMPRESSOR_BIN
+
+
+def lzo_compress(raw: bytes) -> bytes:
+    """Compress with lzo1x_1, matching minilzo's lzo1x_decompress in BB."""
+    compressor = ensure_compressor()
+    result = subprocess.run([str(compressor)], input=raw, capture_output=True, check=True)
+    return result.stdout
+
+
+def prepare_image(image_path: str, height: int) -> Image.Image:
+    img = Image.open(image_path)
+    if img.mode == "RGBA":
+        background = Image.new("RGBA", img.size, (0, 0, 0, 255))
+        img = Image.alpha_composite(background, img)
+    img = img.convert("L")
+
     w, h = img.size
     new_w = round(w * height / h)
     img = img.resize((new_w, height), Image.LANCZOS)
+    return img
 
-    # Raw grayscale pixels
+
+def image_to_c(image_path: str, name: str, height: int = 200) -> str:
+    img = prepare_image(image_path, height)
+    new_w, height = img.size
+
     raw = img.tobytes()
-
-    # LZO compress (use lzo1x_999 for best compression, matching original)
-    compressed = lzo.compress(raw, 9)
+    compressed = lzo_compress(raw)
 
     # Build C array
     lines = [HEADER.format(name=name)]

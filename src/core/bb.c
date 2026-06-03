@@ -21,342 +21,340 @@
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <time.h>
-#include <aalib.h>
-#include "bb.h"
-
-int finish_stuff, starttime, endtime;
-int dual = 0;
-static int quitnow = 0;
-int loopmode;
-aa_context *context;
-aa_renderparams *params;
-int TIME;
-tl_timer *scenetimer;
-struct font *font;
-
-double getwidth(double size)
-{
-    double height = aa_imgheight(context) / size;
-    double width = height * (double) aa_imgwidth(context) * 0.75 / aa_imgheight(context) * aa_mmheight(context) / aa_mmwidth(context);
-    return (width);
-}
-
-void centerprint(int x, int y, double size, int color, char *text, int mode)
-{
-    if (!dual || !mode) {
-	double height = aa_imgheight(context) / size;
-	double width = height * (double) aa_imgwidth(context) * 0.75 / aa_imgheight(context) * aa_mmheight(context) / aa_mmwidth(context);
-	print(x - (width * strlen(text)) / 2, y - height / 2, width, height, font, color, text);
-    }
-    else {
-	if (mode & 1) {
-	    double height = aa_imgheight(context) / size;
-	    double width = height * (double) aa_imgwidth(context) * 0.75 / aa_imgheight(context) * aa_mmheight(context) / aa_mmwidth(context);
-	    print(x / 2 - (width * strlen(text)) / 2, y - height / 2, width, height, font, color, text);
-	}
-	if (mode & 2) {
-	    double height = aa_imgheight(context) / size;
-	    double width = height * (double) aa_imgwidth(context) * 0.75 / aa_imgheight(context) * aa_mmheight(context) / aa_mmwidth(context);
-	    print(aa_imgwidth(context) / 2 + x / 2 - (width * strlen(text)) / 2, y - height / 2, width, height, font, color, text);
-	}
-    }
-}
-
-void centerprinth(int x, int y, double size, int color, char *text, int mode)
-{
-    if (!mode || !dual) {
-	double width = aa_imgwidth(context) / size;
-	double height = width * (double) aa_imgheight(context) * 1.333 / aa_imgwidth(context) * aa_mmwidth(context) / aa_mmheight(context);
-	print(x - (width * strlen(text)) / 2, y - height / 2, width, height, font, color, text);
-    }
-    else {
-	if (mode & 1) {
-	    double width = aa_imgwidth(context) / size / 2;
-	    double height = width * (double) aa_imgheight(context) * 1.333 / aa_imgwidth(context) * aa_mmwidth(context) / aa_mmheight(context);
-	    print(x / 2 - (width * strlen(text)) / 2, y - height / 2, width, height, font, color, text);
-	}
-	if (mode & 1) {
-	    double width = aa_imgwidth(context) / size / 2;
-	    double height = width * (double) aa_imgheight(context) * 1.333 / aa_imgwidth(context) * aa_mmwidth(context) / aa_mmheight(context);
-	    print(aa_imgwidth(context) / 2 + x / 2 - (width * strlen(text)) / 2, y - height / 2, width, height, font, color, text);
-	}
-    }
-}
-
-static void (*control1) (int);
-static int called = 0;
-
-static void mycontrol(void *data, int i)
-{
-    called = 1;
-    if (control1 != NULL)
-	control1(i);
-}
-static void mycontrol2(void *data, int i)
-{
-   ((void (*) (int))data)(i);
-}
-
-int bbupdate()
-{
-    int ch;
-    tl_update_time();
-    TIME = tl_lookup_timer(scenetimer);
-    tl_process_group (syncgroup, NULL);
-    ch = aa_getkey(context, 0);
-    switch (ch) {
-    case 's':
-    case 'S':
-    case AA_BACKSPACE:
-	finish_stuff = 1;
-	break;
-    case AA_ESC:
-    case 'q':
-	finish_stuff = 1, quitnow = 1;
-    }
-    return (ch);
-}
-
-void timestuff(int rate, void (*control) (int), void (*draw) (void), int maxtime)
-{
-    int waitmode = 0, t;
-    tl_timer *timer;
-    bbupdate();
-    /*starttime = TIME; */
-    endtime = starttime + maxtime;
-    timer = tl_create_timer();
-    if (control == NULL) {
-	rate = -40;
-    }
-    if (rate < 0) {
-	waitmode = 1, rate = -rate;
-	control1 = control;
-	tl_set_multihandler(timer, mycontrol, NULL);
-    }
-    else
-	tl_set_multihandler(timer, mycontrol2, control);
-    tl_set_interval(timer, 1000000 / rate);
-    tl_add_timer(syncgroup, timer);
-    tl_reset_timer(timer);
-    tl_slowdown_timer (timer, starttime - TIME);
-    if (control != NULL)
-	control(1);
-    while (!finish_stuff && TIME < endtime) {
-	called = 0;
-	bbupdate();
-	t = tl_process_group(syncgroup, NULL);
-	if (TIME > endtime)
-	    break;
-	if (!called && waitmode)
-	    tl_sleep(t);
-	else {
-	    if (draw != NULL)
-		draw();
-	}
-    }
-    starttime = endtime;
-    tl_free_timer(timer);
-}
-
-void
-bbwait (int maxtime)
-{
-  int wait;
-  if (finish_stuff)
-    return;
-  bbupdate ();
-  endtime = starttime + maxtime;
-
-  wait = endtime - TIME;
-  while (wait > 0)
-    {
-      int t;
-      bbupdate ();
-      t = tl_process_group (syncgroup, NULL);
-      wait = endtime - TIME;
-      if (wait < t)
-	t = wait;
-      tl_sleep (t);
-    }
-  starttime = endtime;
-}
-
-void bbflushwait(int maxtime)
-{
-    int wait;
-    if (finish_stuff)
-	return;
-    bbupdate();
-    wait = maxtime + starttime - TIME;
-    if (wait > 0) {
-	aa_flush(context);
-    }
-    bbwait(maxtime);
-}
-
-static int stage = 1;
-
-int bbinit(int argc, char **argv)
-{
-    aa_defparams.supported|= AA_NORMAL_MASK | AA_BOLD_MASK | AA_DIM_MASK;
-    aa_parseoptions(NULL, NULL, &argc, argv);
-    if (argc != 1 && (argc != 2 || ((argv[1][0] <= '0' || argv[1][0] > '8') && strcmp(argv[1], "-loop")))) {
-	printf("Usage: bb [aaoptions] [number]\n\n");
-	printf("Options:\n"
-	       "  -loop          play demo in infinite loop\n\n"
-	       "AAlib options:\n%s\n", aa_help);
-	exit(1);
-    }
-    context = aa_autoinit(&aa_defparams);
-    if (!context) {
-	printf("Failed to initialize aalib\n");
-	exit(2);
-    }
-    if (!aa_autoinitkbd(context, 0)) {
-	aa_close(context);
-	printf("Failed to initialize keyboard\n");
-	exit(3);
-    }
-    if (argc == 2 && !strcmp(argv[1], "-loop"))
-	loopmode = 1;
-    else if (argc == 2)
-	stage = atol(argv[1]);
-    aa_hidecursor(context);
-    return 1;
-}
-
-int bb(void)
-{
-    aa_gotoxy(context, 0, 0);
-    introscreen();
-    params = aa_getrenderparams();
-    aa_render(context, params, 0, 0, 1, 1);
-    font = uncompressfont( /*context->params.font */ &aa_font16);
-    scenetimer = tl_create_timer();
-    srand(time(NULL));
-    if (stage != 1)
-	finish_stuff = 1;
-    do
-	switch (stage) {
-	default:
-	case 1:
-	    load_song("bb.s3m");
-	    bbupdate();
-	    starttime = endtime = TIME;
-
-	    aa_resize (context);
-	    scene1();
-	    aa_resize (context);
-	    scene3();
-	    if (quitnow)
-		goto quit;
-	    aa_resize (context);
-	    vezen(&fk1, &fk2, &fk3, &fk4);
-	    messager("FILIP KUPSA known as FK, Tingle Notions, Dawn Music\n"
-		"birth: June 22 1979, Tabor, Czech Republic, sex: male\n"
-		     "\n"
-	     "1992 - Changed his piano for 386/mp.com/pc-speaker music\n"
-		     "1993 - Got his first Sound Blaster\n"
-		     "1995 - Changed his SB for a new GUS technology\n"
-		     "1996 - Composed his first great hits\n"
-		     "1996 - FAT recomposition made by Windows 95\n"
-		     "1997 - Released his musac in BB\n"
-		     "\n"
-		     "1998 - Got retired\n"
-		     "\n"
-		     "Contact address: via KT");
-	    devezen2();
-	    aa_resize (context);
-	    scene4();
-	    aa_resize (context);
-	    scene2();
-	    aa_resize (context);
-	    if (quitnow)
-		goto quit;
-	    vezen(&ms1, &ms2, &ms3, &ms4);
-	    messager("MOJMIR SVOBODA known as MS, TiTania, MSS, Bill\n"
-		     "birth: ??, Tabor, Czech Republic, sex: ? male ?\n"
-		     "\n"
-		     "1993 - Installed Linux on his 386sx/25 + 40MB HDD\n"
-		     "1994 - Removed Linux to make space for Doom\n"
-		   "1995 - Reinstalled Linux on his 486Dx4/120 + 850MB\n"
-		     "1996 - Removed Linux to make space for Windows 95\n"
-		     "\n"
-		     "1997 - Removed Windows 95 to make space for aalib\n"
-		     "\n"
-		     "Contact address: titania@mbox.vol.cz");
-	    devezen3();
-	    aa_resize (context);
-	    scene8();
-	    aa_resize (context);
-	    scene6();
-	    aa_resize (context);
-	case 2:
-	    if (quitnow)
-		goto quit;
-	    aa_resize (context);
-	    vezen(&kt1, &kt2, &kt3, &kt4);
-	    messager("KAMIL TOMAN known as KT, Kato, Whale, Bart\n"
-		 "birth: May 19 1979, Tabor, Czech Republic, sex: male\n"
-		     "\n"
-		     "1993 - Became a linux extremist\n"
-		     "1993 - Successful attempt to establish a secret organization\n"
-		     "       Commandline Brotherhood\n"
-		     "1995 - Action 'koules' - a secret project to train brotherhood\n"
-		     "       members - covered under a game design\n"
-		     "\n"
-		 "1998 - Heading a new wave of command line revolution\n"
-		     "\n"
-		     "Contact address: toman@horac.ta.jcu.cz");
-	    bbupdate();
-	    starttime = endtime = TIME;
-	    devezen1();
-	    aa_resize (context);
-	    if (quitnow)
-		goto quit;
-	    aa_resize (context);
-	    scene7();
-	    if (quitnow)
-		goto quit;
-	    aa_resize (context);
-	    scene5();
-	    if (quitnow)
-		goto quit;
-	    aa_resize (context);
-	    scene10();
-	    vezen(&hh1, &hh2, &hh3, &hh4);
-	    messager("JAN HUBICKA known as HH, Jahusoft, HuJaSoft, JHS, UNIX, Honza\n"
-		  "birth: Apr 1 1978, Tabor, Czech Republic, sex: male\n"
-		     "\n"
-		     "1991 - Installed underground hackers OS Linux\n"
-		     "1995 - Headed Action 'koules'\n"
-		     "1996 - Famous troan XaoS to convert all windows instalations\n"
-		     "       into Linux\n"
-		     "\n"
-		     "1998 - Secret plan to make `Text Windows` system to confuse users\n"
-		 "2001 - Planning an assassination of dictator Bill G.\n"
-		     "\n"
-		     "Contact address: hubicka@paru.cas.cz");
-	    aa_resize (context);
-	    devezen4();
-	    if (quitnow)
-		goto quit;
-	    aa_resize (context);
-	    credits();
-	    if (quitnow)
-		goto quit;
-	case 3:
-	    if (loopmode)
-		break;
-	    aa_resize (context);
-	    credits2();
-	}
-    while (loopmode);
-  quit:;
-    aa_close(context);
-    return (0);
-}
+ #include <string.h>
+ #include <stdlib.h>
+ #include <ctype.h>
+ #include <time.h>
+ #include <aalib.h>
+ #include "bb.h"
+ #include "image.h"
+ 
+ int finish_stuff, starttime, endtime;
+ int dual = 0;
+ static int quitnow = 0;
+ int loopmode;
+ aa_context *context;
+ aa_renderparams *params;
+ int TIME;
+ tl_timer *scenetimer;
+ struct font *font;
+ 
+ double getwidth(double size)
+ {
+	 double height = aa_imgheight(context) / size;
+	 double width = height * (double) aa_imgwidth(context) * 0.75 / aa_imgheight(context) * aa_mmheight(context) / aa_mmwidth(context);
+	 return (width);
+ }
+ 
+ void centerprint(int x, int y, double size, int color, char *text, int mode)
+ {
+	 if (!dual || !mode) {
+	 double height = aa_imgheight(context) / size;
+	 double width = height * (double) aa_imgwidth(context) * 0.75 / aa_imgheight(context) * aa_mmheight(context) / aa_mmwidth(context);
+	 print(x - (width * strlen(text)) / 2, y - height / 2, width, height, font, color, text);
+	 }
+	 else {
+	 if (mode & 1) {
+		 double height = aa_imgheight(context) / size;
+		 double width = height * (double) aa_imgwidth(context) * 0.75 / aa_imgheight(context) * aa_mmheight(context) / aa_mmwidth(context);
+		 print(x / 2 - (width * strlen(text)) / 2, y - height / 2, width, height, font, color, text);
+	 }
+	 if (mode & 2) {
+		 double height = aa_imgheight(context) / size;
+		 double width = height * (double) aa_imgwidth(context) * 0.75 / aa_imgheight(context) * aa_mmheight(context) / aa_mmwidth(context);
+		 print(aa_imgwidth(context) / 2 + x / 2 - (width * strlen(text)) / 2, y - height / 2, width, height, font, color, text);
+	 }
+	 }
+ }
+ 
+ void centerprinth(int x, int y, double size, int color, char *text, int mode)
+ {
+	 if (!mode || !dual) {
+	 double width = aa_imgwidth(context) / size;
+	 double height = width * (double) aa_imgheight(context) * 1.333 / aa_imgwidth(context) * aa_mmwidth(context) / aa_mmheight(context);
+	 print(x - (width * strlen(text)) / 2, y - height / 2, width, height, font, color, text);
+	 }
+	 else {
+	 if (mode & 1) {
+		 double width = aa_imgwidth(context) / size / 2;
+		 double height = width * (double) aa_imgheight(context) * 1.333 / aa_imgwidth(context) * aa_mmwidth(context) / aa_mmheight(context);
+		 print(x / 2 - (width * strlen(text)) / 2, y - height / 2, width, height, font, color, text);
+	 }
+	 if (mode & 1) {
+		 double width = aa_imgwidth(context) / size / 2;
+		 double height = width * (double) aa_imgheight(context) * 1.333 / aa_imgwidth(context) * aa_mmwidth(context) / aa_mmheight(context);
+		 print(aa_imgwidth(context) / 2 + x / 2 - (width * strlen(text)) / 2, y - height / 2, width, height, font, color, text);
+	 }
+	 }
+ }
+ 
+ static void (*control1) (int);
+ static int called = 0;
+ 
+ static void mycontrol(void *data, int i)
+ {
+	 called = 1;
+	 if (control1 != NULL)
+	 control1(i);
+ }
+ static void mycontrol2(void *data, int i)
+ {
+	((void (*) (int))data)(i);
+ }
+ 
+ int bbupdate()
+ {
+	 int ch;
+	 tl_update_time();
+	 TIME = tl_lookup_timer(scenetimer);
+	 tl_process_group (syncgroup, NULL);
+	 ch = aa_getkey(context, 0);
+	 switch (ch) {
+	 case 's':
+	 case 'S':
+	 case AA_BACKSPACE:
+	 finish_stuff = 1;
+	 break;
+	 case AA_ESC:
+	 case 'q':
+	 finish_stuff = 1, quitnow = 1;
+	 }
+	 return (ch);
+ }
+ 
+ void timestuff(int rate, void (*control) (int), void (*draw) (void), int maxtime)
+ {
+	 int waitmode = 0, t;
+	 tl_timer *timer;
+	 bbupdate();
+	 /*starttime = TIME; */
+	 endtime = starttime + maxtime;
+	 timer = tl_create_timer();
+	 if (control == NULL) {
+	 rate = -40;
+	 }
+	 if (rate < 0) {
+	 waitmode = 1, rate = -rate;
+	 control1 = control;
+	 tl_set_multihandler(timer, mycontrol, NULL);
+	 }
+	 else
+	 tl_set_multihandler(timer, mycontrol2, control);
+	 tl_set_interval(timer, 1000000 / rate);
+	 tl_add_timer(syncgroup, timer);
+	 tl_reset_timer(timer);
+	 tl_slowdown_timer (timer, starttime - TIME);
+	 if (control != NULL)
+	 control(1);
+	 while (!finish_stuff && TIME < endtime) {
+	 called = 0;
+	 bbupdate();
+	 t = tl_process_group(syncgroup, NULL);
+	 if (TIME > endtime)
+		 break;
+	 if (!called && waitmode)
+		 tl_sleep(t);
+	 else {
+		 if (draw != NULL)
+		 draw();
+	 }
+	 }
+	 starttime = endtime;
+	 tl_free_timer(timer);
+ }
+ 
+ void
+ bbwait (int maxtime)
+ {
+   int wait;
+   if (finish_stuff)
+	 return;
+   bbupdate ();
+   endtime = starttime + maxtime;
+ 
+   wait = endtime - TIME;
+   while (wait > 0)
+	 {
+	   int t;
+	   bbupdate ();
+	   t = tl_process_group (syncgroup, NULL);
+	   wait = endtime - TIME;
+	   if (wait < t)
+	 t = wait;
+	   tl_sleep (t);
+	 }
+   starttime = endtime;
+ }
+ 
+ void bbflushwait(int maxtime)
+ {
+	 int wait;
+	 if (finish_stuff)
+	 return;
+	 bbupdate();
+	 wait = maxtime + starttime - TIME;
+	 if (wait > 0) {
+	 aa_flush(context);
+	 }
+	 bbwait(maxtime);
+ }
+ 
+ static int stage = 1;
+ 
+ int bbinit(int argc, char **argv)
+ {
+	 aa_defparams.supported|= AA_NORMAL_MASK | AA_BOLD_MASK | AA_DIM_MASK;
+	 aa_parseoptions(NULL, NULL, &argc, argv);
+	 if (argc != 1 && (argc != 2 || ((argv[1][0] <= '0' || argv[1][0] > '8') && strcmp(argv[1], "-loop")))) {
+	 printf("Usage: bb [aaoptions] [number]\n\n");
+	 printf("Options:\n"
+			"  -loop          play demo in infinite loop\n\n"
+			"AAlib options:\n%s\n", aa_help);
+	 exit(1);
+	 }
+	 context = aa_autoinit(&aa_defparams);
+	 if (!context) {
+	 printf("Failed to initialize aalib\n");
+	 exit(2);
+	 }
+	 if (!aa_autoinitkbd(context, 0)) {
+	 aa_close(context);
+	 printf("Failed to initialize keyboard\n");
+	 exit(3);
+	 }
+	 if (argc == 2 && !strcmp(argv[1], "-loop"))
+	 loopmode = 1;
+	 else if (argc == 2)
+	 stage = atol(argv[1]);
+	 aa_hidecursor(context);
+	 return 1;
+ }
+ 
+ int bb(void)
+ {
+	 aa_gotoxy(context, 0, 0);
+	 introscreen();
+	 params = aa_getrenderparams();
+	 aa_render(context, params, 0, 0, 1, 1);
+	 font = uncompressfont( /*context->params.font */ &aa_font16);
+	 scenetimer = tl_create_timer();
+	 srand(time(NULL));
+	 if (stage != 1)
+	 finish_stuff = 1;
+	 do
+	 switch (stage) {
+	 default:
+	 case 1:
+		 load_song("bb.s3m");
+		 bbupdate();
+		 starttime = endtime = TIME;
+ 
+		 aa_resize (context);
+		 scene1();
+		 aa_resize (context);
+		 scene3();
+		 if (quitnow)
+		 goto quit;
+		 aa_resize (context);
+		 vezen(&kal1, &kal2, &kal3, &kal4);
+		 messager("KAL'TSIT known as Kal'tsit, Ama-10, Mon3tr's keeper\n"
+			 "birth: classified, Rhodes Island, sex: female\n"
+				 "\n"
+		 "???? - Walked the plain before Terra had a name for it\n"
+		 "???? - Co-founded Babel; stood when Theresa fell\n"
+		 "1097 - Turned ruins into Rhodes Island's medical mandate\n"
+		 "1098 - Refused every physical exam offered to her\n"
+				 "\n"
+		 "2021 - Released to the roster as a six-star Medic\n"
+				 "\n"
+		 "Contact address: via Doctor, or deploy Mon3tr");
+		 devezen2();
+		 aa_resize (context);
+		 scene4();
+		 aa_resize (context);
+		 scene2();
+		 aa_resize (context);
+		 if (quitnow)
+		 goto quit;
+		 vezen(&ami1, &ami2, &ami3, &ami4);
+		 messager("AMIYA known as Amiya, Rhodes Island's public face\n"
+			 "birth: Dec 23, Rim Billiton, sex: female\n"
+				 "\n"
+		 "???? - Taken in by Theresa; learned to lead by watching\n"
+		 "1094 - Stood when Babel fell; chose Rhodes Island's path\n"
+		 "1097 - Inherited the crown and highest executive power\n"
+		 "2020 - Reunited with the Doctor at Chernobog\n"
+				 "\n"
+		 "2021 - Still asking the Doctor to show her the way forward\n"
+				 "\n"
+		 "Contact address: the bridge, or leave a note for Doctor");
+		 devezen3();
+		 aa_resize (context);
+		 scene8();
+		 aa_resize (context);
+		 scene6();
+		 aa_resize (context);
+	 case 2:
+		 if (quitnow)
+		 goto quit;
+		 aa_resize (context);
+		 vezen(&doc1, &doc2, &doc3, &doc4);
+		 messager("THE DOCTOR known as Doctor, Rhodes Island field commander\n"
+		  "birth: classified, unknown, sex: unknown\n"
+			  "\n"
+		  "???? - Commanded Babel's most decisive counterattacks\n"
+		  "???? - Slept while history moved on without memory\n"
+		  "2020 - Woken in Chernobog; escorted back to the ship\n"
+		  "2021 - Still cannot recall what mattered most\n"
+			  "\n"
+		  "2026 - Kal'tsit still schedules the physical exams\n"
+			  "\n"
+		  "Contact address: command bridge; no restrictions on channel");
+		 bbupdate();
+		 starttime = endtime = TIME;
+		 devezen1();
+		 aa_resize (context);
+		 if (quitnow)
+		 goto quit;
+		 aa_resize (context);
+		 scene7();
+		 if (quitnow)
+		 goto quit;
+		 aa_resize (context);
+		 scene5();
+		 if (quitnow)
+		 goto quit;
+		 aa_resize (context);
+		 scene10();
+		 vezen(&clo1, &clo2, &clo3, &clo4);
+		 messager("CLOSURE known as Closure, Chief Engineer, Procurement boss\n"
+		   "birth: Dec 10, Kazdel, sex: female\n"
+			  "\n"
+		  "???? - Built a network in a Kazdel attic, alone\n"
+		  "???? - Dragged out by Theresa to fix impossible things\n"
+		  "1089 - Rebuilt the hull they would call Rhodes Island\n"
+		  "1094 - Took charge when Kal'tsit was away too long\n"
+			  "\n"
+		  "2021 - Still selling snacks through special channels\n"
+			  "\n"
+		  "Contact address: Engineering; pay your invoices first");
+		 aa_resize (context);
+		 devezen4();
+		 if (quitnow)
+		 goto quit;
+		 aa_resize (context);
+		 credits();
+		 if (quitnow)
+		 goto quit;
+	 case 3:
+		 if (loopmode)
+		 break;
+		 aa_resize (context);
+		 credits2();
+	 }
+	 while (loopmode);
+   quit:;
+	 aa_close(context);
+	 return (0);
+ }
+ 

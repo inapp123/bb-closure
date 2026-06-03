@@ -29,8 +29,14 @@ struct image {
   int width,height;
   unsigned char *decompressed;
 };
-extern struct image fk1,fk2,fk3,fk4;
-extern struct image hh1,hh2,hh3,hh4;
-extern struct image kt1,kt2,kt3,kt4;
-extern struct image ms1,ms2,ms3,ms4;
+// extern struct image fk1,fk2,fk3,fk4;
+// extern struct image hh1,hh2,hh3,hh4;
+// extern struct image kt1,kt2,kt3,kt4;
+// extern struct image ms1,ms2,ms3,ms4;
+
+extern struct image clo1,clo2,clo3,clo4;
+extern struct image kal1,kal2,kal3,kal4;
+extern struct image doc1,doc2,doc3,doc4;
+extern struct image ami1,ami2,ami3,ami4;
+
 #endif
