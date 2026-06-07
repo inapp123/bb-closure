@@ -46,6 +46,8 @@ int aa_resize(aa_context * c)
 	    free(c->imagebuffer);
 	if (c->textbuffer != NULL)
 	    free(c->textbuffer);
+	if (c->glyphbuffer != NULL)
+	    free(c->glyphbuffer);
 	if (c->attrbuffer != NULL)
 	    free(c->attrbuffer);
 	c->params.width = width;
@@ -59,9 +61,21 @@ int aa_resize(aa_context * c)
 	    return 0;
 	}
 	memset(c->textbuffer, ' ', c->params.width * c->params.height);
+	if ((c->glyphbuffer = calloc(aa_scrwidth(c) * aa_scrheight(c),
+				     sizeof(uint32_t))) == NULL) {
+	    free(c->imagebuffer);
+	    free(c->textbuffer);
+	    return 0;
+	}
+	{
+	    int i, cells = aa_scrwidth(c) * aa_scrheight(c);
+	    for (i = 0; i < cells; i++)
+		c->glyphbuffer[i] = ' ';
+	}
 	if ((c->attrbuffer = calloc(1, c->params.width * c->params.height)) == NULL) {
 	    free(c->imagebuffer);
 	    free(c->textbuffer);
+	    free(c->glyphbuffer);
 	    return 0;
 	}
     }
@@ -178,6 +192,7 @@ aa_context *aa_init(__AA_CONST struct aa_driver * driver, __AA_CONST struct aa_h
     if(defparams->boldmul) c->params.boldmul=defparams->boldmul;
     c->imagebuffer = NULL;
     c->textbuffer = NULL;
+    c->glyphbuffer = NULL;
     c->attrbuffer = NULL;
     c->resizehandler = NULL;
     if (!aa_resize(c)) {
@@ -229,6 +244,8 @@ void aa_close(aa_context * c)
 	free(c->imagebuffer);
     if (c->textbuffer != NULL)
 	free(c->textbuffer);
+    if (c->glyphbuffer != NULL)
+	free(c->glyphbuffer);
     if (c->attrbuffer != NULL)
 	free(c->attrbuffer);
     if(c->driverdata) free(c->driverdata);

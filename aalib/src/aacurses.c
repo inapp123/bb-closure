@@ -1,3 +1,4 @@
+#include <locale.h>
 #include <setjmp.h>
 #include <signal.h>
 #include <stdio.h>
@@ -26,6 +27,7 @@ static int curses_init(__AA_CONST struct aa_hardware_params *p, __AA_CONST void 
 {
     int a;
     if (!__curses_is_up) {
+	setlocale(LC_ALL, "");
 	fflush(stdout);
 	if ((initscr()) == NULL)
 	    return 0;

@@ -24,13 +24,26 @@
 #include <string.h>
 #include <malloc.h>
 #include "bb.h"
+#include "utf8.h"
 
 static int cursor_x, cursor_y;
 static int start;
 
+static void
+glyph_fill_row_space(int row)
+{
+    int x, w = aa_scrwidth(context);
+    for (x = 0; x < w; x++) {
+        context->glyphbuffer[row * w + x] = ' ';
+        context->textbuffer[row * w + x] = ' ';
+        context->attrbuffer[row * w + x] = AA_NORMAL;
+    }
+}
+
 static void newline()
 {
     while (cursor_x < aa_scrwidth(context)) {
+	context->glyphbuffer[cursor_x + cursor_y * aa_scrwidth(context)] = ' ';
 	context->textbuffer[cursor_x + cursor_y * aa_scrwidth(context)] = ' ';
 	context->attrbuffer[cursor_x + cursor_y * aa_scrwidth(context)] = AA_NORMAL;
 	cursor_x++;
@@ -40,23 +53,47 @@ static void newline()
 	start = 0;
     cursor_y++, cursor_x = 0;
     if (cursor_y >= aa_scrheight(context)) {
-	memmove(context->textbuffer + start * aa_scrwidth(context), context->textbuffer + (start + 1) * aa_scrwidth(context), aa_scrwidth(context) * (aa_scrheight(context) - start - 1));
-	memmove(context->attrbuffer + start * aa_scrwidth(context), context->attrbuffer + (start + 1) * aa_scrwidth(context), aa_scrwidth(context) * (aa_scrheight(context) - start - 1));
-	memset(context->textbuffer + aa_scrwidth(context) * (aa_scrheight(context) - 1), ' ', aa_scrwidth(context));
-	memset(context->attrbuffer + aa_scrwidth(context) * (aa_scrheight(context) - 1), 0, aa_scrwidth(context));
+	int w = aa_scrwidth(context);
+	int h = aa_scrheight(context);
+	memmove(context->textbuffer + start * w,
+		context->textbuffer + (start + 1) * w,
+		(size_t) w * (h - start - 1));
+	memmove(context->glyphbuffer + start * w,
+		context->glyphbuffer + (start + 1) * w,
+		(size_t) w * (h - start - 1) * sizeof(uint32_t));
+	memmove(context->attrbuffer + start * w,
+		context->attrbuffer + (start + 1) * w,
+		(size_t) w * (h - start - 1));
+	glyph_fill_row_space(aa_scrheight(context) - 1);
 	cursor_y--;
     }
 }
 
-static void put(char c)
+static void put_cp(uint32_t cp)
 {
-    if (c == '\n') {
+    int w, i, pos;
+
+    if (cp == '\n') {
 	newline();
 	return;
     }
-    context->textbuffer[cursor_x + cursor_y * aa_scrwidth(context)] = c;
-    context->attrbuffer[cursor_x + cursor_y * aa_scrwidth(context)] = AA_NORMAL;
+    w = utf8_column_width(cp);
+    if (w <= 0)
+        return;
+    pos = cursor_x + cursor_y * aa_scrwidth(context);
+    context->glyphbuffer[pos] = cp;
+    context->textbuffer[pos] = (cp < 128) ? (unsigned char) cp : ' ';
+    context->attrbuffer[pos] = AA_NORMAL;
     cursor_x++;
+    for (i = 1; i < w; i++) {
+        if (cursor_x >= aa_scrwidth(context))
+            break;
+        pos = cursor_x + cursor_y * aa_scrwidth(context);
+        context->glyphbuffer[pos] = AA_GLYPH_WIDE_PAD;
+        context->textbuffer[pos] = ' ';
+        context->attrbuffer[pos] = AA_NORMAL;
+        cursor_x++;
+    }
     if (cursor_x == aa_scrwidth(context))
 	newline();
 }
@@ -64,17 +101,23 @@ static void put(char c)
 static void putcursor(void)
 {
     context->attrbuffer[cursor_x + cursor_y * aa_scrwidth(context)] = AA_REVERSE;
+    context->glyphbuffer[cursor_x + cursor_y * aa_scrwidth(context)] = ' ';
     context->textbuffer[cursor_x + cursor_y * aa_scrwidth(context)] = ' ';
     aa_gotoxy(context, cursor_x, cursor_y);
 }
 
 void messager(char *c)
 {
-    int i, s = strlen(c);
+    const char *s = c;
+    uint32_t cp;
+
     start = cursor_y = aa_scrheight(context) - 1;
     cursor_x = 0;
-    for (i = 0; i < s; i++) {
-	put(c[i]);
+    while (s != NULL && *s) {
+        s = utf8_next(s, &cp);
+        if (cp == 0)
+            break;
+        put_cp(cp);
 	putcursor();
 	bbflushwait(0.03 * 1000000);
     }

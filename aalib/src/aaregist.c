@@ -39,7 +39,9 @@ aa_context *aa_autoinit(__AA_CONST struct aa_hardware_params *params)
     aa_context *context = NULL;
     int i = 0;
     char *t;
+    int driver_requested = 0;
     while ((t = aa_getfirst(&aa_displayrecommended)) != NULL) {
+	driver_requested = 1;
 	if (context == NULL) {
 	    for (i = 0; aa_drivers[i] != NULL; i++) {
 		if (!strcmp(t, aa_drivers[i]->name) || !strcmp(t, aa_drivers[i]->shortname)) {
@@ -48,10 +50,15 @@ aa_context *aa_autoinit(__AA_CONST struct aa_hardware_params *params)
 		}
 	    }
 	    if (aa_drivers[i] == NULL)
-		printf("Driver %s unknown", t);
+		fprintf(stderr, "Driver %s unknown\n", t);
+	    else if (context == NULL)
+		fprintf(stderr, "Driver %s failed to initialize\n", t);
 	    free(t);
-	}
+	} else
+	    free(t);
     }
+    if (driver_requested && context == NULL)
+	return NULL;
     i = 0;
     while (context == NULL) {
 	if (aa_drivers[i] == NULL)

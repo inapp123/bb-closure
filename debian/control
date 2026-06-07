@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Uwe Hermann <uwe@debian.org>
 Uploaders: Axel Beckert <abe@debian.org>
 Build-Depends: debhelper-compat (= 13),
-               libaa1-dev (>= 1.4p5-28),
+               libfreetype6-dev,
                libmikmod-dev
 Standards-Version: 4.6.1
 Homepage: https://aa-project.sourceforge.net/bb/
@@ -16,6 +16,7 @@ Package: bb
 Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends}
+Recommends: fonts-noto-cjk
 Description: ASCII-art demo based on AAlib
  This package contains a 'high quality audio-visual demonstration'
  of ASCII-art using AAlib, a portable ASCII-art graphics library.

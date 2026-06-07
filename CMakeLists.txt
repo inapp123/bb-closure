@@ -97,6 +97,7 @@ option(AALIB_MOUSE_GPM "Enable GPM mouse backend (Linux)" OFF)
 
 # Music
 option(BB_MUSIC "Enable music" OFF)
+option(BB_UTF8 "Enable UTF-8 and FreeType text rendering" ON)
 
 set(AALIB_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/aalib/src)
 
@@ -118,6 +119,9 @@ set(AALIB_SOURCES
     ${AALIB_SRC_DIR}/aaedit.c
     ${AALIB_SRC_DIR}/aafastre.c
     ${AALIB_SRC_DIR}/aaflush.c
+    ${AALIB_SRC_DIR}/aaglyph.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/utf8.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/ftfont.c
     ${AALIB_SRC_DIR}/aafont.c
     ${AALIB_SRC_DIR}/aafonts.c
     ${AALIB_SRC_DIR}/aahelp.c
@@ -265,8 +269,28 @@ if(AALIB_MOUSE_GPM)
     endif()
 endif()
 
+if(BB_UTF8)
+    find_package(Freetype)
+    if(NOT Freetype_FOUND)
+        find_package(PkgConfig QUIET)
+        if(PKG_CONFIG_FOUND)
+            pkg_check_modules(FREETYPE2 freetype2)
+        endif()
+    endif()
+    if(Freetype_FOUND OR FREETYPE2_FOUND)
+        set(HAVE_FTFONT 1)
+        message(STATUS "FreeType found: UTF-8 glyph rendering enabled")
+    else()
+        message(WARNING "BB_UTF8 requested but FreeType not found; UTF-8 CJK disabled")
+        set(HAVE_FTFONT 0)
+    endif()
+else()
+    set(HAVE_FTFONT 0)
+endif()
+
 add_library(aa STATIC ${AALIB_SOURCES})
 target_include_directories(aa PUBLIC ${AALIB_SRC_DIR})
+target_include_directories(aa PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/core)
 if(LIBDRM_FOUND)
     target_include_directories(aa PRIVATE ${LIBDRM_INCLUDE_DIRS})
 endif()
@@ -294,6 +318,25 @@ if(AALIB_DEFS)
 endif()
 if(AALIB_LIBS)
     target_link_libraries(aa PUBLIC ${AALIB_LIBS})
+endif()
+if(HAVE_FTFONT)
+    configure_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/WQY_bitmap_12px.ttf"
+        "${CMAKE_CURRENT_BINARY_DIR}/WQY_bitmap_12px.ttf"
+        COPYONLY
+    )
+    configure_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/WQY_bitmap_16px.ttf"
+        "${CMAKE_CURRENT_BINARY_DIR}/WQY_bitmap_16px.ttf"
+        COPYONLY
+    )
+    if(Freetype_FOUND)
+        target_link_libraries(aa PUBLIC Freetype::Freetype)
+    else()
+        target_include_directories(aa PRIVATE ${FREETYPE2_INCLUDE_DIRS})
+        target_link_libraries(aa PUBLIC ${FREETYPE2_LIBRARIES})
+    endif()
+    target_compile_definitions(aa PRIVATE HAVE_FTFONT=1)
 endif()
 
 set(AALIB_INCLUDE_DIR ${AALIB_SRC_DIR})
@@ -391,6 +434,16 @@ if(HAVE_LIBMIKMOD)
     target_link_libraries(bb PRIVATE ${LIBMIKMOD_LIBRARY})
 endif()
 
+if(HAVE_FTFONT)
+    if(Freetype_FOUND)
+        target_link_libraries(bb PRIVATE Freetype::Freetype)
+    else()
+        target_include_directories(bb PRIVATE ${FREETYPE2_INCLUDE_DIRS})
+        target_link_libraries(bb PRIVATE ${FREETYPE2_LIBRARIES})
+    endif()
+    target_compile_definitions(bb PRIVATE HAVE_FTFONT=1)
+endif()
+
 target_compile_definitions(bb PRIVATE
     SOUNDDIR="${CMAKE_INSTALL_FULL_DATADIR}/bb"
 )
@@ -400,6 +453,10 @@ target_compile_definitions(bb PRIVATE
 install(TARGETS bb RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 install(FILES bb.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1)
+
+if(HAVE_FTFONT)
+    install(FILES WQY_bitmap_12px.ttf DESTINATION ${CMAKE_INSTALL_BINDIR})
+endif()
 
 if(SOUNDFILES)
     install(FILES ${SOUNDFILES} DESTINATION ${CMAKE_INSTALL_DATADIR}/bb)

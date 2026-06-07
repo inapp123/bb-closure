@@ -6,9 +6,11 @@
 #ifdef X11_DRIVER
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include "utf8.h"
 #include "aalib.h"
 #include "aaint.h"
 #include "aaxint.h"
+#include "aaglyph.h"
 __AA_CONST struct aa_driver X11_d;
 #define C2 0x68
 #define C1 0xB2
@@ -450,105 +452,124 @@ static void X_sync_screen (aa_context *c, struct xdriverdata *d)
     d->height = scr_h;
 }
 
+struct xdraw_ctx {
+    struct xdriverdata *d;
+    GC gc;
+};
+
+static void
+X_pick_colors (struct xdriverdata *d, int attr, uint32_t *fg, uint32_t *bg)
+{
+    if (d->inverted) {
+	switch (attr) {
+	case AA_DIM:
+	    *fg = d->inverteddim;
+	    *bg = d->invertedblack;
+	    break;
+	case AA_BOLD:
+	case AA_BOLDFONT:
+	    *fg = d->invertedbold;
+	    *bg = d->invertedblack;
+	    break;
+	case AA_REVERSE:
+	    *fg = d->invertednormal;
+	    *bg = d->invertedblack;
+	    break;
+	case AA_SPECIAL:
+	    *fg = d->invertedspecial;
+	    *bg = d->invertedblack;
+	    break;
+	default:
+	    *fg = d->invertednormal;
+	    *bg = d->invertedblack;
+	    break;
+	}
+	return;
+    }
+    switch (attr) {
+    case AA_DIM:
+	*fg = d->dim;
+	*bg = d->black;
+	break;
+    case AA_BOLD:
+    case AA_BOLDFONT:
+	*fg = d->bold;
+	*bg = d->black;
+	break;
+    case AA_REVERSE:
+	*fg = d->black;
+	*bg = d->normal;
+	break;
+    case AA_SPECIAL:
+	*fg = d->special;
+	*bg = d->black;
+	break;
+    default:
+	*fg = d->normal;
+	*bg = d->black;
+	break;
+    }
+}
+
+static void
+X_putpixel_cb (void *ctx, int px, int py, uint32_t rgb)
+{
+    struct xdraw_ctx *xc = (struct xdraw_ctx *) ctx;
+    XSetForeground (xc->d->dp, xc->gc, (unsigned long) rgb);
+    XDrawPoint (xc->d->dp,
+                xc->d->pixmapmode ? xc->d->pi : xc->d->wi,
+                xc->gc, px, py);
+}
+
 static void X_flush(aa_context * c)
 {
     struct xdriverdata *d=c->driverdata;
-    int x, y, attr;
-    int xs = 0, ys = 0;
-    int l, same;
-    int s = 0;
-    int pos;
+    int x, y;
     int scr_w, scr_h;
+    struct xdraw_ctx xctx;
+    int cell_h = d->fontheight > 0 ? d->fontheight : 8;
 
     X_sync_screen (c, d);
-    scr_w = d->width;
-    scr_h = d->height;
+    scr_w = aa_scrwidth (c);
+    scr_h = aa_scrheight (c);
     if (scr_w <= 0 || scr_h <= 0)
 	return;
-    attr = AA_NORMAL;
-    alloctables(d);
-    drawed = 0;
-    area = 0;
-    nrectangles[0] = 0;
-    nrectangles[1] = 0;
-    nrectangles[2] = 0;
-    nrectangles[3] = 0;
-    if (d->previoust == NULL) {
-	d->previoust = malloc ((size_t) scr_w * scr_h);
-	d->previousa = calloc ((size_t) scr_w * scr_h, 1);
-	memset(d->previoust, ' ', (size_t) scr_w * scr_h);
-    }
-    for (y = 0; y < scr_h; y++) {
-	s = l = 0;
-	xs = 0;
-	ys = y;
-	for (x = 0; x < scr_w; x++) {
-	    pos = x + y * scr_w;
-	    if (s > 5 || (c->attrbuffer[pos] != attr && (c->textbuffer[pos] != ' ' || Black[c->attrbuffer[pos]] || Black[attr]))) {
-		if (l - s)
-		    MyDrawString(d,attr, xs, ys,
-			&c->textbuffer[xs + ys * scr_w], l - s);
-		attr = c->attrbuffer[pos];
-		s = l = 0;
-		xs = x;
-		ys = y;
-	    }
-	    if ((d->previoust[pos] == c->textbuffer[pos] && d->previousa[pos] == c->attrbuffer[pos]) || (!Black[attr] && d->previoust[pos] == ' ' && c->textbuffer[pos] == ' ' && !Black[d->previousa[pos]]))
-		same = 1;
-	    else
-		same = 0;
-	    if (xs == x && same)
-		xs++;
-	    else {
-		if (same)
-		    s++;
-		else
-		    s = 0;
-		l++;
-	    }
-	}
-	if (l - s)
-	    MyDrawString(d,attr, xs, ys,
-			 &c->textbuffer[xs + ys * scr_w], l - s);
-    }
-    if (drawed) {
-	memcpy(d->previousa, c->attrbuffer, (size_t) scr_w * scr_h);
-	memcpy(d->previoust, c->textbuffer, (size_t) scr_w * scr_h);
-	if (nrectangles[0])
-	    XFillRectangles(d->dp, dr, d->blackGC, &rectangles(0, 0), nrectangles[0]);
-	if (nrectangles[1])
-	    XFillRectangles(d->dp, dr, d->normalGC, &rectangles(1, 0), nrectangles[1]);
-	if (nrectangles[2])
-	    XFillRectangles(d->dp, dr, d->specialGC, &rectangles(2, 0), nrectangles[2]);
-	if (d->cvisible)
-	    XDrawLine(d->dp, dr, d->normalGC, d->Xpos * d->realfontwidth, (d->Ypos + 1) * d->fontheight - 1, (d->Xpos + 1) * d->realfontwidth - 1, (d->Ypos + 1) * d->fontheight - 1);
 
-	for (y = 0; y < d->height; y++) {
-	    for (x = 0; x < NATT; x++) {
-		if (nitem[y][x]) {
-		    X_setattr(d,x);
-		    XDrawText(d->dp, dr, d->currGC, 0, (y + 1) * d->fontheight - d->font_s->descent, &texty(y, x, 0), nitem[y][x]);
-		    if (x == 4)
-			XDrawText(d->dp, dr, d->currGC, 1, (y + 1) * d->fontheight - d->font_s->descent, &texty(y, x, 0), nitem[y][x]);
-		}
+    XFillRectangle (d->dp, d->pixmapmode ? d->pi : d->wi, d->blackGC, 0, 0,
+		    d->pixelwidth, d->pixelheight);
+
+    xctx.d = d;
+    xctx.gc = d->normalGC;
+    if (c->glyphbuffer != NULL) {
+	for (y = 0; y < scr_h; y++) {
+	    for (x = 0; x < scr_w; x++) {
+		int idx = x + y * scr_w;
+		uint32_t cp = c->glyphbuffer[idx];
+		int attr = c->attrbuffer[idx];
+		uint32_t fg, bg;
+
+		if (cp == AA_GLYPH_WIDE_PAD)
+		    continue;
+		if (cp == ' ' && attr == AA_NORMAL)
+		    continue;
+		X_pick_colors (d, attr, &fg, &bg);
+		X_setattr (d, attr);
+		xctx.gc = d->currGC;
+		aa_draw_cell (c, x * d->realfontwidth, y * cell_h + 1, cp,
+			      8, cell_h, fg, bg, X_putpixel_cb, &xctx);
 	    }
 	}
-	if (d->pixmapmode) {
-	    if (nrectangles[3] && area < d->width*d->height/2 && nrectangles[3] < 5)
-	      {
-		int i;
-	        /*fprintf (stderr, "%i %i\n",nrectangles[3], area);*/
-		for (i = 0; i < nrectangles[3]; i++)
-		  XClearArea (d->dp, d->wi, rectangles(3, i).x, rectangles(3,i).y,
-			      rectangles(3,i).width, rectangles(3,i).height, 0);
-	      }
-	    else
-	      XClearWindow(d->dp, d->wi);
-	}
-	/*if(!d->pixmapmode) */
-	XSync(d->dp, 0);
     }
-    freetables();
+    if (d->cvisible)
+	XDrawLine (d->dp, d->pixmapmode ? d->pi : d->wi, d->normalGC,
+		   d->Xpos * d->realfontwidth,
+		   (d->Ypos + 1) * cell_h - 1,
+		   (d->Xpos + 1) * d->realfontwidth - 1,
+		   (d->Ypos + 1) * cell_h - 1);
+    /* pixmap is the window background; must invalidate window to show updates */
+    if (d->pixmapmode)
+	XClearWindow (d->dp, d->wi);
+    XFlush (d->dp);
 }
 void __aa_X_redraw(aa_context *c)
 {

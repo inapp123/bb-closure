@@ -22,6 +22,7 @@
  */
 #ifndef __AALIB_INCLUDED__
 #define __AALIB_INCLUDED__
+#include <stdint.h>
 #include <stdio.h>
 #ifdef __cplusplus
 extern "C" {
@@ -159,7 +160,8 @@ struct aa_context {
     int mulx, muly;		/* Ratio of character size over pixel size  */
     int imgwidth, imgheight;    /* Dimensions of emulated image  */
     unsigned char *imagebuffer; /* Virtual buffer containing image */
-    unsigned char *textbuffer;  /* Virtual buffer containing text */
+    unsigned char *textbuffer;  /* Virtual buffer containing text (legacy) */
+    uint32_t *glyphbuffer;    /* One Unicode codepoint per display column */
     unsigned char *attrbuffer;  /* Virtual buffer containing attributes */
     unsigned short *table;      /* Precalculated values used by rendering
 				   algorithm.
@@ -663,6 +665,9 @@ void aa_puts(
 	     enum aa_attribute attr,
 	     /* String to output.  */
 	     __AA_CONST char *s);
+
+void aa_puts_utf8(aa_context *c, int x, int y, enum aa_attribute attr,
+		  __AA_CONST char *s);
 /*
  * print text to AA-lib output buffers.
  * Print given text to AA-lib output buffers.  To see the effect you need to

@@ -32,6 +32,8 @@ void aa_fastrender(aa_context * c, int x1, int y1, int x2, int y2)
 		     ((((int) c->imagebuffer[pos + 1 + wi] >> 4)) << 4)];
 	    c->attrbuffer[pos1] = val >> 8;
 	    c->textbuffer[pos1] = val & 0xff;
+	    if (c->glyphbuffer != NULL)
+		c->glyphbuffer[pos1] = (uint32_t) (val & 0xff);
 	    pos += 2;
 	    pos1++;
 	}

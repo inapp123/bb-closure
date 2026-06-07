@@ -207,20 +207,20 @@ void scene5(void)
     memcpy(helpbuffer, context->imagebuffer, aa_imgwidth(context) * aa_imgheight(context));
     params->dither = AA_NONE;
 
-    text = "Supports";
+    text = "本机支持";
     drawptr = mydraw3;
     init_from_left();
     timestuff(-60, ctrl_from_left, draw, 2 * 1000000);
 
     drawptr = mydraw;
     aa_wave = 0;
-    text = "ANTIALIASING";
+    text = "边缘平滑";
     timestuff(60, NULL, draw, 5 * 1000000);
 
     text = "";
     timestuff(-60, inc_aa_wave, draw, 3 * 1000000);
 
-    text = "256 colors-ascii";
+    text = "256 级ASCII灰度";
     colorval = 0;
     drawptr = mydraw1;
     timestuff(-60, inccolor, draw, 6 * 1000000);
@@ -228,29 +228,29 @@ void scene5(void)
     sstarttime = TIME;
     pause_3d_scene();
     init_from_left();
-    text = "dithering";
+    text = "画面抖动";
     drawptr = mydraw4;
     timestuff(-60, ctrl_from_left, draw, 2 * 1000000);
 
     pause_3d_scene();
-    text = "random";
+    text = "源石粉尘？";
     drawptr = mydraw2;
     timestuff(-60, incrandom, draw, 3 * 1000000);
 
     params->randomval = 0;
     pause_3d_scene();
     text1 = " ";
-    text = "Error";
+    text = "误差";
     drawptr = mydraw6;
     timestuff(60, NULL, draw, 1 * 1000000);
     params->dither = AA_ERRORDISTRIB;
 
-    text1 = "Error";
-    text = "distribution";
+    text1 = "误差";
+    text = "扩散";
     drawptr = mydraw6;
     timestuff(60, NULL, draw, 1 * 1000000);
 
-    text1 = "distribution";
+    text1 = "扩散";
     text = " ";
     drawptr = mydraw6;
     timestuff(60, NULL, draw, 1 * 1000000);
@@ -275,17 +275,17 @@ void scene5(void)
 
     pause_3d_scene();
     text1 = " ";
-    text = "Gamma ";
+    text = "亮度 ";
     drawptr = mydraw7;
     timestuff(-60, incgama, draw, 1 * 1000000);
     params->dither = AA_FLOYD_S;
 
-    text1 = "Gamma ";
-    text = "Correction";
+    text1 = "亮度 ";
+    text = "校准";
     drawptr = mydraw7;
     timestuff(60, NULL, draw, 1 * 1000000);
 
-    text1 = "Correction";
+    text1 = "校准";
     text = " ";
     drawptr = mydraw7;
     timestuff(-60, decgama, draw, 1.5 * 1000000);

@@ -58,9 +58,9 @@ def rot_y(x, y, z, degrees):
 
 
 def orient_vertex(x, y, z):
-    """Stand the model up, then yaw 45° for nicer 4-way views."""
+    """Stand the model up, then yaw 45 + 180° for nicer 4-way views."""
     x, y, z = rot_x(x, y, z, -90)
-    x, y, z = rot_y(x, y, z, 45)
+    x, y, z = rot_y(x, y, z, 45 + 180)
     return x, y, z
 
 

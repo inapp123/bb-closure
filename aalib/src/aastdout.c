@@ -1,5 +1,6 @@
 #include "config.h"
 #include <stdio.h>
+#include "utf8.h"
 #include "aalib.h"
 #include "aaint.h"
 
@@ -16,16 +17,29 @@ static void stdout_getsize(aa_context * c, int *width, int *height)
 {
 }
 
-static void stdout_flush(aa_context * c)
+static void stdout_emit_row(aa_context *c, FILE *out)
 {
     int x, y;
+    char buf[8];
+
     for (y = 0; y < aa_scrheight(c); y++) {
 	for (x = 0; x < aa_scrwidth(c); x++) {
-	    putc(c->textbuffer[x + y * aa_scrwidth(c)], stdout);
+	    int idx = x + y * aa_scrwidth(c);
+	    uint32_t cp = c->glyphbuffer[idx];
+	    int n;
+	    if (cp == AA_GLYPH_WIDE_PAD)
+		continue;
+	    n = utf8_encode(cp, buf);
+	    fwrite(buf, 1, (size_t) n, out);
 	}
-	putc('\n', stdout);
+	putc('\n', out);
     }
-    putc('', stdout);
+}
+
+static void stdout_flush(aa_context * c)
+{
+    stdout_emit_row(c, stdout);
+    putc('\f', stdout);
     putc('\n', stdout);
     fflush(stdout);
 }
@@ -48,14 +62,8 @@ __AA_CONST struct aa_driver stdout_d =
 
 static void stderr_flush(aa_context * c)
 {
-    int x, y;
-    for (y = 0; y < aa_scrheight(c); y++) {
-	for (x = 0; x < aa_scrwidth(c); x++) {
-	    putc(c->textbuffer[x + y * aa_scrwidth(c)], stderr);
-	}
-	putc('\n', stderr);
-    }
-    putc('', stderr);
+    stdout_emit_row(c, stderr);
+    putc('\f', stderr);
     putc('\n', stderr);
     fflush(stderr);
 }

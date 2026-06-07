@@ -28,6 +28,7 @@
 #include <malloc.h>
 #include <stdlib.h>
 #include "bb.h"
+#include "utf8.h"
 #define STATE (TIME-starttime)
 #undef MAXTIME
 #define MAXTIME 2500000
@@ -130,53 +131,64 @@ static void displogo(int y)
     aa_puts(context, x, y + 5, AA_NORMAL, "dT     8  8     Tb");
 }
 
+static void
+display_credit_line(const char *src, int xcol, int yrow)
+{
+    const char *s = src;
+    int x1 = 0;
+    int a = AA_NORMAL;
+    char buf[8];
+
+    while (s != NULL && *s) {
+        while (((unsigned char) *s) < 20 && *s) {
+            a = *s - 1;
+            s++;
+        }
+        if (*s == '\0')
+            break;
+        {
+            uint32_t cp;
+            int n;
+            s = utf8_next(s, &cp);
+            if (cp == 0)
+                break;
+            n = utf8_encode(cp, buf);
+            buf[n] = '\0';
+            aa_puts(context, xcol + x1, yrow, a, buf);
+            x1 += utf8_column_width(cp);
+        }
+    }
+}
+
 static void displaytext(int p)
 {
     int i;
-    int x, x1, a = AA_NORMAL;
-    char s[2] =
-    {0, 0};
+
     textclrscr();
     displogo(1);
     for (i = 0; i < aa_scrwidth(context); i++) {
 	context->textbuffer[aa_scrwidth(context) * (YSTART - 2) + i] = '_';
+	if (context->glyphbuffer != NULL)
+	    context->glyphbuffer[aa_scrwidth(context) * (YSTART - 2) + i] = '_';
     }
     for (i = p; i < p + aa_scrheight(context) - YSTART; i++) {
 	if (i < textsize) {
-	    x = 0;
-	    x1 = 0;
-	    for (x1 = x = 0; x < strlen(line[i]); x++, x1++) {
-		while (((unsigned char) line[i][x]) < 20 && line[i][x])
-		    a = line[i][x] - 1, x++;
-		if (x < strlen(line[i])) {
-		    s[0] = line[i][x];
-		    aa_puts(context, x1, i - p + YSTART, a, s);
-		}
-	    }
+	    display_credit_line(line[i], 0, i - p + YSTART);
 	}
 	else {
-	    x = 0;
-	    aa_puts(context, x, i - p + YSTART, AA_NORMAL, "~");
+	    aa_puts(context, 0, i - p + YSTART, AA_NORMAL, "~");
 	}
     }
     if (dual) {
 	int sh = aa_scrheight(context) - YSTART;
 	for (i = p; i < p + (aa_scrheight(context) - YSTART); i++) {
 	    if (i + sh < textsize) {
-		x = 0;
-		x1 = 0;
-		for (x1 = x = 0; x < strlen(line[i + sh]); x++, x1++) {
-		    while (((unsigned char) line[i + sh][x]) < 20)
-			a = line[i + sh][x] - 1, x++;
-		    if (x < strlen(line[i + sh])) {
-			s[0] = line[i + sh][x];
-			aa_puts(context, x1 + aa_scrwidth(context) / 2, i - p + YSTART, a, s);
-		    }
-		}
+		display_credit_line(line[i + sh], aa_scrwidth(context) / 2,
+				    i - p + YSTART);
 	    }
 	    else {
-		x = 0;
-		aa_puts(context, x + aa_scrwidth(context) / 2, i - p + YSTART, AA_NORMAL, "~");
+		aa_puts(context, aa_scrwidth(context) / 2, i - p + YSTART,
+			AA_NORMAL, "~");
 	    }
 	}
     }

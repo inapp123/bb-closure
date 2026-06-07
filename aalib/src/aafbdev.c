@@ -8,8 +8,10 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include "utf8.h"
 #include "aalib.h"
 #include "aaint.h"
+#include "aaglyph.h"
 
 struct fbdev_state
 {
@@ -241,36 +243,33 @@ fbdev_cursor (aa_context *c, int mode)
 }
 
 static void
+fbdev_putpixel_cb (void *ctx, int px, int py, uint32_t rgb)
+{
+  fbdev_putpixel ((struct fbdev_state *) ctx, px, py, rgb);
+}
+
+static void
 fbdev_flush (aa_context *c)
 {
   struct fbdev_state *st = (struct fbdev_state *) c->driverdata;
-  const unsigned char *font = c->params.font->data;
   int cw = aa_scrwidth (c);
   int ch = aa_scrheight (c);
-  int x, y, gy, gx;
+  int x, y;
 
   for (y = 0; y < ch; y++)
     {
       for (x = 0; x < cw; x++)
         {
           int idx = x + y * cw;
-          int chv = c->textbuffer[idx] & 0xff;
+          uint32_t cp = c->glyphbuffer[idx];
           int attr = c->attrbuffer[idx];
-          const unsigned char *glyph = font + chv * st->font_h;
           uint32_t fg, bg;
-          fbdev_pick_colors (attr, &fg, &bg, &st->vinfo);
 
-          for (gy = 0; gy < st->font_h; gy++)
-            {
-              unsigned char row = glyph[gy];
-              int py = y * st->font_h + gy;
-              for (gx = 0; gx < 8; gx++)
-                {
-                  int px = x * 8 + gx;
-                  uint32_t color = (row & (0x80 >> gx)) ? fg : bg;
-                  fbdev_putpixel (st, px, py, color);
-                }
-            }
+          fbdev_pick_colors (attr, &fg, &bg, &st->vinfo);
+          if (cp == AA_GLYPH_WIDE_PAD)
+            continue;
+          aa_draw_cell (c, x * 8, y * st->font_h, cp, 8, st->font_h, fg, bg,
+                        fbdev_putpixel_cb, st);
         }
     }
 
@@ -278,6 +277,7 @@ fbdev_flush (aa_context *c)
       && st->cursor_y >= 0 && st->cursor_y < ch)
     {
       int py = st->cursor_y * st->font_h + (st->font_h - 1);
+      int gx;
       uint32_t fg = fbdev_pack_rgb (&st->vinfo, 255, 255, 255);
       for (gx = 0; gx < 8; gx++)
         fbdev_putpixel (st, st->cursor_x * 8 + gx, py, fg);

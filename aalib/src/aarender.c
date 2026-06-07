@@ -205,6 +205,8 @@ void aa_renderpalette(aa_context * c, __AA_CONST aa_palette palette, __AA_CONST 
 	    }
 	    c->attrbuffer[pos1] = val >> 8;
 	    c->textbuffer[pos1] = val & 0xff;
+	    if (c->glyphbuffer != NULL)
+		c->glyphbuffer[pos1] = (uint32_t) (val & 0xff);
 	    pos += 2;
 	    pos1++;
 	}

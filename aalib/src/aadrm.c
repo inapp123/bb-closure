@@ -11,8 +11,10 @@
 #include <xf86drmMode.h>
 #include <drm.h>
 #include <drm_mode.h>
+#include "utf8.h"
 #include "aalib.h"
 #include "aaint.h"
+#include "aaglyph.h"
 
 struct drm_state
 {
@@ -387,36 +389,33 @@ drm_cursor (aa_context *c, int mode)
 }
 
 static void
+drm_putpixel_cb (void *ctx, int px, int py, uint32_t rgb)
+{
+  drm_putpixel ((struct drm_state *) ctx, px, py, rgb);
+}
+
+static void
 drm_flush (aa_context *c)
 {
   struct drm_state *st = (struct drm_state *) c->driverdata;
-  const unsigned char *font = c->params.font->data;
   int cw = aa_scrwidth (c);
   int ch = aa_scrheight (c);
-  int x, y, gy, gx;
+  int x, y;
 
   for (y = 0; y < ch; y++)
     {
       for (x = 0; x < cw; x++)
         {
           int idx = x + y * cw;
-          int chv = c->textbuffer[idx] & 0xff;
+          uint32_t cp = c->glyphbuffer[idx];
           int attr = c->attrbuffer[idx];
-          const unsigned char *glyph = font + chv * st->font_h;
           uint32_t fg, bg;
-          drm_pick_colors (attr, &fg, &bg);
 
-          for (gy = 0; gy < st->font_h; gy++)
-            {
-              unsigned char row = glyph[gy];
-              int py = y * st->font_h + gy;
-              for (gx = 0; gx < 8; gx++)
-                {
-                  int px = x * 8 + gx;
-                  uint32_t color = (row & (0x80 >> gx)) ? fg : bg;
-                  drm_putpixel (st, px, py, color);
-                }
-            }
+          drm_pick_colors (attr, &fg, &bg);
+          if (cp == AA_GLYPH_WIDE_PAD)
+            continue;
+          aa_draw_cell (c, x * 8, y * st->font_h, cp, 8, st->font_h, fg, bg,
+                        drm_putpixel_cb, st);
         }
     }
 
@@ -424,6 +423,7 @@ drm_flush (aa_context *c)
       && st->cursor_y >= 0 && st->cursor_y < ch)
     {
       int py = st->cursor_y * st->font_h + (st->font_h - 1);
+      int gx;
       uint32_t fg = drm_pack_rgb (255, 255, 255);
       for (gx = 0; gx < 8; gx++)
         drm_putpixel (st, st->cursor_x * 8 + gx, py, fg);

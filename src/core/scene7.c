@@ -445,12 +445,12 @@ static void update_julia(void)
 static void mydraw()
 {
     clrscr();
-    dual_scroll_text(starttime, zoomed, "Times");
+    dual_scroll_text(starttime, zoomed, "倍率映射");
 }
 static void mydraw1()
 {
     clrscr();
-    draw_from_left("Zoomed");
+    draw_from_left("神经连接");
 }
 
 

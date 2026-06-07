@@ -32,7 +32,13 @@ struct font {
 };
 
 #define clrscr() memset(context->imagebuffer,0,aa_imgwidth(context)*aa_imgheight(context))
-#define textclrscr()     memset(context->textbuffer,' ',aa_scrwidth(context)*aa_scrheight(context)), memset(context->attrbuffer,AA_NORMAL,aa_scrwidth(context)*aa_scrheight(context))
+#define textclrscr() do { \
+    int _tw = aa_scrwidth(context) * aa_scrheight(context); \
+    int _ti; \
+    memset(context->textbuffer, ' ', _tw); \
+  if (context->glyphbuffer) for (_ti = 0; _ti < _tw; _ti++) context->glyphbuffer[_ti] = ' '; \
+    memset(context->attrbuffer, AA_NORMAL, _tw); \
+} while (0)
 
 extern int finish_stuff, starttime, endtime;
 extern aa_context *context;

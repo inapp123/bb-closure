@@ -23,6 +23,8 @@
 
 #include "bb.h"
 #include "image.h"
+#include "utf8.h"
+#include "ftfont.h"
 #include <aalib.h>
 #include <ctype.h>
 #include <stdlib.h>
@@ -53,7 +55,7 @@ void centerprint(int x, int y, double size, int color, char *text, int mode) {
     double width = height * (double)aa_imgwidth(context) * 0.75 /
                    aa_imgheight(context) * aa_mmheight(context) /
                    aa_mmwidth(context);
-    print(x - (width * strlen(text)) / 2, y - height / 2, width, height, font,
+    print(x - (width * utf8_display_width(text)) / 2, y - height / 2, width, height, font,
           color, text);
   } else {
     if (mode & 1) {
@@ -61,7 +63,7 @@ void centerprint(int x, int y, double size, int color, char *text, int mode) {
       double width = height * (double)aa_imgwidth(context) * 0.75 /
                      aa_imgheight(context) * aa_mmheight(context) /
                      aa_mmwidth(context);
-      print(x / 2 - (width * strlen(text)) / 2, y - height / 2, width, height,
+      print(x / 2 - (width * utf8_display_width(text)) / 2, y - height / 2, width, height,
             font, color, text);
     }
     if (mode & 2) {
@@ -69,7 +71,7 @@ void centerprint(int x, int y, double size, int color, char *text, int mode) {
       double width = height * (double)aa_imgwidth(context) * 0.75 /
                      aa_imgheight(context) * aa_mmheight(context) /
                      aa_mmwidth(context);
-      print(aa_imgwidth(context) / 2 + x / 2 - (width * strlen(text)) / 2,
+      print(aa_imgwidth(context) / 2 + x / 2 - (width * utf8_display_width(text)) / 2,
             y - height / 2, width, height, font, color, text);
     }
   }
@@ -81,7 +83,7 @@ void centerprinth(int x, int y, double size, int color, char *text, int mode) {
     double height = width * (double)aa_imgheight(context) * 1.333 /
                     aa_imgwidth(context) * aa_mmwidth(context) /
                     aa_mmheight(context);
-    print(x - (width * strlen(text)) / 2, y - height / 2, width, height, font,
+    print(x - (width * utf8_display_width(text)) / 2, y - height / 2, width, height, font,
           color, text);
   } else {
     if (mode & 1) {
@@ -89,7 +91,7 @@ void centerprinth(int x, int y, double size, int color, char *text, int mode) {
       double height = width * (double)aa_imgheight(context) * 1.333 /
                       aa_imgwidth(context) * aa_mmwidth(context) /
                       aa_mmheight(context);
-      print(x / 2 - (width * strlen(text)) / 2, y - height / 2, width, height,
+      print(x / 2 - (width * utf8_display_width(text)) / 2, y - height / 2, width, height,
             font, color, text);
     }
     if (mode & 1) {
@@ -97,7 +99,7 @@ void centerprinth(int x, int y, double size, int color, char *text, int mode) {
       double height = width * (double)aa_imgheight(context) * 1.333 /
                       aa_imgwidth(context) * aa_mmwidth(context) /
                       aa_mmheight(context);
-      print(aa_imgwidth(context) / 2 + x / 2 - (width * strlen(text)) / 2,
+      print(aa_imgwidth(context) / 2 + x / 2 - (width * utf8_display_width(text)) / 2,
             y - height / 2, width, height, font, color, text);
     }
   }
@@ -213,7 +215,7 @@ static int parse_stage_arg(const char *arg) {
   if (!isdigit((unsigned char)arg[0]))
     return -1;
   n = strtol(arg, &end, 10);
-  if (*end != '\0' || n < 0 || n > 10 || n == 9)
+  if (*end != '\0' || n < 0 || n > 14 || n == 9)
     return -1;
   return (int)n;
 }
@@ -226,7 +228,7 @@ int bbinit(int argc, char **argv) {
     printf("Usage: bb [aaoptions] [-loop] [scene]\n\n");
     printf("Options:\n"
            "  -loop          play demo in infinite loop\n"
-           "  scene          0 or omitted: full demo; 1-8, 10: that scene only\n\n"
+           "  scene          0 or omitted: full demo; 1-8, 10-14: that scene only\n\n"
            "AAlib options:\n%s\n",
            aa_help);
     exit(1);
@@ -247,7 +249,72 @@ int bbinit(int argc, char **argv) {
   else if (argc == 2)
     stage = parse_stage_arg(argv[1]);
   aa_hidecursor(context);
+  ftfont_init(NULL);
   return 1;
+}
+
+static void play_kal_introduction(void) {
+  play_image_carousel(&kal1, &kal2, &kal3, &kal4);
+  messager("【代号】凯尔希  Kal'tsit  Ama-10\n"
+           "【种族】未知  【职务】罗德岛医疗主管\n"
+           "\n"
+           "???? - 自泰拉尚无名之时便行走于大地\n"
+           "???? - 与特蕾西娅共创巴别塔\n"
+           "1097 - 将废墟化为罗德岛医疗使命\n"
+           "1098 - 拒绝一切体检安排\n"
+           "\n"
+           "2021 - 以六星医疗干员实装\n"
+           "\n"
+           "联络方式：通过博士，或部署 Mon3tr");
+}
+
+static void play_amiya_introduction(void) {
+  play_image_carousel(&ami1, &ami2, &ami3, &ami4);
+  messager("【代号】阿米娅  Amiya\n"
+           "【出身】雷姆必拓  【职务】罗德岛公开领袖\n"
+           "\n"
+           "???? - 由特蕾西娅收养，在旁学会领导\n"
+           "1094 - 巴别塔陨落，选择罗德岛之路\n"
+           "1097 - 继承最高执行权\n"
+           "2020 - 于切尔诺伯格与博士重逢\n"
+           "\n"
+           "2021 - 仍在请博士指引前路\n"
+           "\n"
+           "联络方式：舰桥；或留信给博士");
+}
+
+static void play_doctor_introduction(void) {
+  play_image_carousel(&doc1, &doc2, &doc3, &doc4);
+  messager("【代号】Doctor\n"
+           "【性别】未知  【出身】机密\n"
+           "【职务】罗德岛战场指挥官\n"
+           "\n"
+           "???? - 指挥巴别塔最关键反击\n"
+           "???? - 沉睡，历史在无记忆中前行\n"
+           "2020 - 于切尔诺伯格被唤醒，护送回舰\n"
+           "2021 - 仍无法记起最重要之事\n"
+           "\n"
+           "2026 - 凯尔希仍在安排体检\n"
+           "\n"
+           "联络方式：指挥舰桥；频道无限制");
+}
+
+static void play_closure_introduction(void) {
+  play_image_carousel(&clo1, &clo2, &clo3, &clo4);
+  messager("【代号】可露希尔  Closure  R00A\n"
+           "【种族】萨卡兹（血魔）  【感染情况】未感染\n"
+           "【职务】罗德岛总工程师 / 采购部负责人\n"
+           "\n"
+           "???? - 躲在卡兹戴尔 attic，自封信息世界毁灭者\n"
+           "1086 - 特蕾西娅来访，被拖出车库加入巴别塔\n"
+           "1089 - 六个月内完成罗德岛舰船改造与涂装\n"
+           "1094 - 凯尔希不在时代管全岛（然后差点过劳）\n"
+           "\n"
+           "2026 - 同意出外勤；以六星先锋身份实装\n"
+           "2026 - 仍在向博士推销滞销零食\n"
+           "\n"
+           "联络方式：工程部（请先付账）\n"
+           "备注：Lambda 待命；博士热水壶终身保修");
 }
 
 static void play_scene(int scene) {
@@ -285,6 +352,18 @@ static void play_scene(int scene) {
   case 10:
     scene10();
     break;
+  case 11:
+    play_kal_introduction();
+    break;
+  case 12:
+    play_amiya_introduction();
+    break;
+  case 13:
+    play_doctor_introduction();
+    break;
+  case 14:
+    play_closure_introduction();
+    break;
   }
 }
 
@@ -300,18 +379,7 @@ static void play_full_demo(void) {
   if (quitnow)
     return;
   aa_resize(context);
-  play_image_carousel(&kal1, &kal2, &kal3, &kal4);
-  messager("KAL'TSIT known as Kal'tsit, Ama-10, Mon3tr's keeper\n"
-           "birth: classified, Rhodes Island, sex: female\n"
-           "\n"
-           "???? - Walked the plain before Terra had a name for it\n"
-           "???? - Co-founded Babel; stood when Theresa fell\n"
-           "1097 - Turned ruins into Rhodes Island's medical mandate\n"
-           "1098 - Refused every physical exam offered to her\n"
-           "\n"
-           "2021 - Released to the roster as a six-star Medic\n"
-           "\n"
-           "Contact address: via Doctor, or deploy Mon3tr");
+  play_kal_introduction();
   section_transition_2();
   aa_resize(context);
   scene4();
@@ -320,18 +388,7 @@ static void play_full_demo(void) {
   aa_resize(context);
   if (quitnow)
     return;
-  play_image_carousel(&ami1, &ami2, &ami3, &ami4);
-  messager("AMIYA known as Amiya, Rhodes Island's public face\n"
-           "birth: Dec 23, Rim Billiton, sex: female\n"
-           "\n"
-           "???? - Taken in by Theresa; learned to lead by watching\n"
-           "1094 - Stood when Babel fell; chose Rhodes Island's path\n"
-           "1097 - Inherited the crown and highest executive power\n"
-           "2020 - Reunited with the Doctor at Chernobog\n"
-           "\n"
-           "2021 - Still asking the Doctor to show her the way forward\n"
-           "\n"
-           "Contact address: the bridge, or leave a note for Doctor");
+  play_amiya_introduction();
   section_transition_3();
   aa_resize(context);
   scene8();
@@ -341,18 +398,7 @@ static void play_full_demo(void) {
   if (quitnow)
     return;
   aa_resize(context);
-  play_image_carousel(&doc1, &doc2, &doc3, &doc4);
-  messager("THE DOCTOR known as Doctor, Rhodes Island field commander\n"
-           "birth: classified, unknown, sex: unknown\n"
-           "\n"
-           "???? - Commanded Babel's most decisive counterattacks\n"
-           "???? - Slept while history moved on without memory\n"
-           "2020 - Woken in Chernobog; escorted back to the ship\n"
-           "2021 - Still cannot recall what mattered most\n"
-           "\n"
-           "2026 - Kal'tsit still schedules the physical exams\n"
-           "\n"
-           "Contact address: command bridge; no restrictions on channel");
+  play_doctor_introduction();
   bbupdate();
   starttime = endtime = TIME;
   section_transition_1();
@@ -369,27 +415,16 @@ static void play_full_demo(void) {
     return;
   aa_resize(context);
   scene10();
-  play_image_carousel(&clo1, &clo2, &clo3, &clo4);
-  messager("CLOSURE known as Closure, Chief Engineer, Procurement boss\n"
-           "birth: Dec 10, Kazdel, sex: female\n"
-           "\n"
-           "???? - Built a network in a Kazdel attic, alone\n"
-           "???? - Dragged out by Theresa to fix impossible things\n"
-           "1089 - Rebuilt the hull they would call Rhodes Island\n"
-           "1094 - Took charge when Kal'tsit was away too long\n"
-           "\n"
-           "2021 - Still selling snacks through special channels\n"
-           "\n"
-           "Contact address: Engineering Dept.; pay your invoices first");
+  play_closure_introduction();
   aa_resize(context);
   section_transition_4();
   if (quitnow)
     return;
+  if (loopmode)
+    return;
   aa_resize(context);
   credits();
   if (quitnow)
-    return;
-  if (loopmode)
     return;
   aa_resize(context);
   credits2();
@@ -412,6 +447,7 @@ int bb(void) {
       play_scene(stage);
   } while (loopmode && !quitnow);
 quit:;
+  ftfont_uninit();
   aa_close(context);
   return (0);
 }

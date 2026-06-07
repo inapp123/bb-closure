@@ -109,7 +109,14 @@ static void mydraw()
 #define MIN(x,y) ((x)<(y)?(x):(y))
 static void clrinvaz()
 {
-    memset(context->textbuffer, ' ', aa_scrwidth(context) * MIN(15, aa_scrheight(context)));
+    {
+        int n = aa_scrwidth(context) * MIN(15, aa_scrheight(context));
+        int j;
+        memset(context->textbuffer, ' ', n);
+        if (context->glyphbuffer)
+            for (j = 0; j < n; j++)
+                context->glyphbuffer[j] = ' ';
+    }
     /*aa_display(context, 0, 0, aa_scrwidth(context), aa_scrheight(context)); */
 }
 

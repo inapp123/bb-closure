@@ -21,9 +21,12 @@
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <string.h>
 #include <aalib.h>
 #include "config.h"
 #include "bb.h"
+#include "utf8.h"
+#include "ftfont.h"
 
 void fastscale(char *b1, char *b2, int x1, int x2, int y1, int y2, int width1, int width2, int color)
 {
@@ -104,10 +107,56 @@ static INLINE void pscale(int x1, int y1, int x2, int y2, char *data, int w, int
     fastscale(data + xx1 + yy1 * w, context->imagebuffer + x1 + aa_imgwidth(context) * y1, xx2 - xx1, x2 - x1, yy2 - yy1, y2 - y1, w, aa_imgwidth(context), color);
 
 }
+
+static void
+print_ft_glyph(int x1, int y1, int x2, int y2, uint32_t cp, int color)
+{
+    unsigned char buf[64 * 64];
+    int gw = 16;
+    int gh = 16;
+    int cols = utf8_column_width(cp);
+    int x, y;
+
+    if (cols <= 0)
+        return;
+    gw = cols * 8;
+    if (!ftfont_render_glyph(cp, gw, gh, buf, gw))
+        return;
+    for (y = 0; y < gh; y++) {
+        for (x = 0; x < gw; x++) {
+            int px1 = x1 + (x2 - x1) * x / gw;
+            int py1 = y1 + (y2 - y1) * y / gh;
+            int px2 = x1 + (x2 - x1) * (x + 1) / gw;
+            int py2 = y1 + (y2 - y1) * (y + 1) / gh;
+            char bit = buf[y * gw + x] ? (char) color : 0;
+            if (bit)
+                pscale(px1, py1, px2, py2, &bit, 1, 1, color);
+        }
+    }
+}
+
 void print(int x, int y, float width, int height, struct font *f, int color, char *text)
 {
-    int i;
-    for (i = 0; text[i]; i++) {
-	pscale(x + i * width, y, x + (i + 1) * width, y + height, f->data + f->width * (f->height * text[i]), f->width, f->height, color);
+    const char *s = text;
+    uint32_t cp;
+    float pos = 0;
+
+    while (s != NULL && *s) {
+        int cols;
+        s = utf8_next(s, &cp);
+        if (cp == 0)
+            break;
+        cols = utf8_column_width(cp);
+        if (cols <= 0)
+            continue;
+        if (cp < 128 && f != NULL) {
+            pscale(x + (int) pos, y, x + (int) (pos + width * cols), y + height,
+                   f->data + f->width * (f->height * (int) cp),
+                   f->width, f->height, color);
+        } else if (ftfont_ready()) {
+            print_ft_glyph(x + (int) pos, y,
+                           x + (int) (pos + width * cols), y + height, cp, color);
+        }
+        pos += width * cols;
     }
 }

@@ -24,6 +24,7 @@
 #include <math.h>
 #include <string.h>
 #include "bb.h"
+#include "utf8.h"
 
 #define ETIME 650000
 #define RATE 60
@@ -48,17 +49,17 @@ void blur(int n)
 
 void dual_scroll_text(int starttime, char *text2, char *text1)
 {
-    int pos = (getwidth(2) * strlen(text1) + 1);
+    int pos = (getwidth(2) * utf8_display_width(text1) + 1);
     centerprint(-pos / 2 + (aa_imgwidth(context) + pos * 1.2) * STATE / (endtime - starttime), 2 * aa_imgheight(context) / 3, 2, 255, text1, 0);
-    pos = (getwidth(2) * strlen(text2) + 1);
+    pos = (getwidth(2) * utf8_display_width(text2) + 1);
     centerprint(aa_imgwidth(context) + pos / 2 - (aa_imgwidth(context) + pos * 1.2) * STATE / (endtime - starttime), aa_imgheight(context) / 3, 2, 255, text2, 0);
 }
 
 static void dual_scroll_text_alt(int starttime, char *text1, char *text2)
 {
-    int pos = (getwidth(2) * strlen(text1) + 1);
+    int pos = (getwidth(2) * utf8_display_width(text1) + 1);
     centerprint(-pos / 2 + (aa_imgwidth(context) + pos * 1.2) * STATE / (endtime - starttime), aa_imgheight(context) / 3, 2, 255, text1, 0);
-    pos = (getwidth(2) * strlen(text2) + 1);
+    pos = (getwidth(2) * utf8_display_width(text2) + 1);
     centerprint(aa_imgwidth(context) + pos / 2 - (aa_imgwidth(context) + pos * 1.2) * STATE / (endtime - starttime), 2 * aa_imgheight(context) / 3, 2, 255, text2, 0);
 }
 
@@ -105,7 +106,7 @@ void ctrl_from_left(int i)
 
 void draw_from_left(char *mesg)
 {
-    print(0, xpos1 * aa_imgheight(context), aa_imgwidth(context) / (double) strlen(mesg), aa_imgheight(context) * xpos, font, 255, mesg);
+    print(0, xpos1 * aa_imgheight(context), aa_imgwidth(context) / (double) utf8_display_width(mesg), aa_imgheight(context) * xpos, font, 255, mesg);
 }
 
 void drawzoomer(char *mesg, int starttime, int pos)
@@ -124,31 +125,31 @@ void drawzoomer(char *mesg, int starttime, int pos)
 void draw_slide_left(char *mesg, char *mesg1, int starttime)
 {
     if (STATE < ETIME2 && STATE > 0) {
-	print(0, 0, aa_imgwidth(context) / (double) strlen(mesg) * ((float) STATE / ETIME2), aa_imgheight(context), font, 255, mesg);
-	print(aa_imgwidth(context) * ((float) STATE / ETIME2), 0, aa_imgwidth(context) / (double) strlen(mesg1) * (1 - (float) STATE / ETIME2), aa_imgheight(context), font, 255, mesg1);
+	print(0, 0, aa_imgwidth(context) / (double) utf8_display_width(mesg) * ((float) STATE / ETIME2), aa_imgheight(context), font, 255, mesg);
+	print(aa_imgwidth(context) * ((float) STATE / ETIME2), 0, aa_imgwidth(context) / (double) utf8_display_width(mesg1) * (1 - (float) STATE / ETIME2), aa_imgheight(context), font, 255, mesg1);
     }
     if (STATE > ETIME2)
-	print(0, 0, aa_imgwidth(context) / (double) strlen(mesg), aa_imgheight(context), font, 255, mesg);
+	print(0, 0, aa_imgwidth(context) / (double) utf8_display_width(mesg), aa_imgheight(context), font, 255, mesg);
 }
 
 void draw_slide_right(char *mesg, char *mesg1, int starttime)
 {
     if (STATE < ETIME2 && STATE > 0) {
-	print(0, 0, aa_imgwidth(context) / (double) strlen(mesg1) * (1 - (float) STATE / ETIME2), aa_imgheight(context), font, 255, mesg1);
-	print(aa_imgwidth(context) * (1 - (float) STATE / ETIME2), 0, aa_imgwidth(context) / (double) strlen(mesg) * ((float) STATE / ETIME2), aa_imgheight(context), font, 255, mesg);
+	print(0, 0, aa_imgwidth(context) / (double) utf8_display_width(mesg1) * (1 - (float) STATE / ETIME2), aa_imgheight(context), font, 255, mesg1);
+	print(aa_imgwidth(context) * (1 - (float) STATE / ETIME2), 0, aa_imgwidth(context) / (double) utf8_display_width(mesg) * ((float) STATE / ETIME2), aa_imgheight(context), font, 255, mesg);
     }
     if (STATE > ETIME2)
-	print(0, 0, aa_imgwidth(context) / (double) strlen(mesg), aa_imgheight(context), font, 255, mesg);
+	print(0, 0, aa_imgwidth(context) / (double) utf8_display_width(mesg), aa_imgheight(context), font, 255, mesg);
 }
 
 void draw_slide_vertical(char *mesg, char *mesg1, int starttime)
 {
     if (STATE < ETIME2 && STATE > 0) {
-	print(0, 0, aa_imgwidth(context) / strlen(mesg), aa_imgheight(context) * ((float) STATE / ETIME2), font, 255, mesg);
-	print(0, aa_imgheight(context) * ((float) STATE / ETIME2), aa_imgwidth(context) / strlen(mesg1), aa_imgheight(context) * (1 - (float) STATE / ETIME2), font, 255, mesg1);
+	print(0, 0, aa_imgwidth(context) / utf8_display_width(mesg), aa_imgheight(context) * ((float) STATE / ETIME2), font, 255, mesg);
+	print(0, aa_imgheight(context) * ((float) STATE / ETIME2), aa_imgwidth(context) / utf8_display_width(mesg1), aa_imgheight(context) * (1 - (float) STATE / ETIME2), font, 255, mesg1);
     }
     if (STATE > ETIME2)
-	print(0, 0, aa_imgwidth(context) / strlen(mesg), aa_imgheight(context), font, 255, mesg);
+	print(0, 0, aa_imgwidth(context) / utf8_display_width(mesg), aa_imgheight(context), font, 255, mesg);
 }
 
 #define LTIME 200000
@@ -179,7 +180,7 @@ static void draw_zoom_messages()
 static void mydraw()
 {
     clrscr();
-    dual_scroll_text_alt(starttime, "Greetings", "To");
+    dual_scroll_text_alt(starttime, "致敬", "罗德岛");
     /*draw_slide_right(mesg, lastmesg, starttime); */
 }
 
@@ -187,18 +188,18 @@ void scene2(void)
 {
     char *name_list[] =
     {
-	"Mostima",
-	"Fiametta",
-	"Exusiai",
-	"Lemuen",
-	"Texas",
-	"Lappland",
-	"Executor",
-	"Gladios",
-	"Astesia",
-	"Aosta",
+	"梅耶",
+	"温蒂",
+	"THRM-EX",
+	"Castle-3",
+	"Lancet-2",
+	"Lambda",
+	"Dijkstra",
+	"凯尔希",
+	"博士",
+	"阿米娅",
 	".....",
-	"Hypergryph",
+	"鹰角网络",
 	"",
 	"!?!",
     };

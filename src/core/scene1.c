@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <aalib.h>
 #include "bb.h"
+#include "utf8.h"
 #include "image.h"
 
 #ifdef ETIME
@@ -54,7 +55,7 @@ void bb_reset_draw_state(void)
 
 static void drawwait()
 {
-    aa_puts(context, (aa_scrwidth(context) - strlen(text)) / 2, aa_scrheight(context) / 2, AA_SPECIAL, text);
+    aa_puts(context, (aa_scrwidth(context) - utf8_display_width(text)) / 2, aa_scrheight(context) / 2, AA_SPECIAL, text);
     aa_flush(context);
 }
 
@@ -66,7 +67,7 @@ static void drawwait2()
     /*genwave(); */
     if (i < 0)
 	i = 0;
-    centerprint(aa_imgwidth(context) / 2, aa_imgheight(context) / 3, 2, i, "AA", 0);
+    centerprint(aa_imgwidth(context) / 2, aa_imgheight(context) / 3, 3, i, "PRTS", 0);
     i = bright + 255;
     if (i < 0)
 	i = 0;
@@ -80,8 +81,8 @@ static double pos, delta, dist;
 static void drawwait4()
 {
     clrscr();
-    centerprint(aa_imgwidth(context) / 4 - dist * aa_imgwidth(context), pos, 1.1 + delta / 2, 255, "B", 0);
-    centerprint(3 * aa_imgwidth(context) / 4 + dist * aa_imgwidth(context), aa_imgheight(context) - pos, 1.1 + delta / 2, 255, "B", 0);
+    centerprint(aa_imgwidth(context) / 4 - dist * aa_imgwidth(context), pos, 1.5 + delta / 2, 255, "罗", 0);
+    centerprint(3 * aa_imgwidth(context) / 4 + dist * aa_imgwidth(context), aa_imgheight(context) - pos, 1.5 + delta / 2, 255, "德", 0);
 }
 static void flash_title(char *text, float n)
 {
@@ -94,7 +95,7 @@ void draw(void)
 	drawptr();
     aa_render(context, params, 0, 0, aa_imgwidth(context), aa_imgheight(context));
     if (text != NULL)
-	aa_puts(context, (aa_scrwidth(context) - strlen(text)) / 2, aa_scrheight(context) / 2, AA_SPECIAL, text);
+	aa_puts(context, (aa_scrwidth(context) - utf8_display_width(text)) / 2, aa_scrheight(context) / 2, AA_SPECIAL, text);
     aa_flush(context);
 }
 
@@ -134,6 +135,8 @@ static void drawline(int y)
 	else
 	    c = (x - shift) % 3 ? HEXA : ' ';
 	context->textbuffer[x + y] = c;
+	if (context->glyphbuffer != NULL)
+	    context->glyphbuffer[x + y] = (unsigned char) c;
     }
 }
 
@@ -144,7 +147,7 @@ static void drawwait3()
     for (y = 0; y < aa_scrheight(context); y++) {
 	drawline(y);
     }
-    aa_puts(context, (aa_scrwidth(context) - strlen(text)) / 2, aa_scrheight(context) / 2, AA_SPECIAL, text);
+    aa_puts(context, (aa_scrwidth(context) - utf8_display_width(text)) / 2, aa_scrheight(context) / 2, AA_SPECIAL, text);
     aa_flush(context);
 }
 
@@ -259,21 +262,21 @@ static void intro_strobe_titles()
 
     char *text[] =
     {
-	"the",
-	"100 %",
-	"ANSI C",
-	"PORTABLE",
-	"DEMO",
-	";^D",
-	"(^;",
-	"FULL",
-	"SVGA",
-	"TEXT",
-	"MODE",
+	"罗德岛",
+	"工程部",
+	"全舰",
+	"状态",
+	"监视",
+	"Demo",
+	"基于",
+	"EL屏",
+	"和",
+	"Zynq",
+	"7010",
 	"",
-	"DEVELOPED",
-	"UNDER",
-	"LINUX",
+	"演示",
+	"改自",
+	"BB",
 	"!",
 	"!",
 	"!",
@@ -281,25 +284,25 @@ static void intro_strobe_titles()
     };
     float sizes[] =
     {
-	3,
-	3.5,
-	3.5,
-	4.2,
-	3,
-	2,
-	2,
-	3,
-	3,
-	3,
-	3,
-	1,
-	5,
-	3,
-	3,
-	1,
-	2,
-	3,
-	4.2,
+        2.5,      // "罗德岛" (3字) -> 2.5
+        2.5,    // "工程部" (3字) -> 2.5
+        1.5,    // "全舰"   (2字) -> 1.5
+        1.5,    // "状态"   (2字) -> 1.5
+        2.5,    // "监视"   (2字) -> 1.5, Actually "监视" is 2字, so use 1.5, but prompt says 三个字用2, 两个字用1.5, 四个字用2.5
+        2,      // "Demo" (not中文，保留原来)
+        1.5,    // "基于"   (2字) -> 1.5
+        2,      // "EL屏" (非全中文，保留原来)
+        2,      // "和"    (1字，标点不变，保留原值)
+        2,      // "Zynq" (非全中文，保留原来)
+        2,      // "7010" (数字，保留原来)
+        1,      // ""
+        2,      // "演示" (2字) -> 1.5 但是原是5，是否写错，改用1.5
+        2,    // "修改自" (3字) -> 2
+        2,      // "BB" (非中文，保留原来)
+        1,      // "!"
+        2,      // "!"
+        3,      // "!"
+        4.2,      // "?"
     };
     if (context->driver->print != NULL)
 	params->dither = AA_NONE;
@@ -351,7 +354,7 @@ void scene1(void)
     aa_showcursor(context);
     textclrscr();
     clrscr();
-    text = "Please wait. Precalculating data";
+    text = "正在提交反馈至神经";
     cursorx = cursory = 0;
     bright = 255;
     pos = delta = dist = 0;
@@ -394,7 +397,7 @@ void scene1(void)
 
 void introscreen(void)
 {
-    text = "Please wait. Precalculating data";
+    text = "正在提交反馈至神经";
     drawwait();
     text = "";
 
