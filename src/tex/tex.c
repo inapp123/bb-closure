@@ -42,7 +42,7 @@
 #define Bufflen 768
 #define VERT 3
 #define ArC 12000
-#define MaxFaces 500
+#define MaxFaces 1600
 
 typedef unsigned char byte;
 typedef unsigned short int word;
