@@ -85,35 +85,35 @@ void scene10()
     patnikconstructor();
     params->gamma = 1;
     centery = -40;
-    strobikstart();
+    strobe_start();
     zoom = 3;
     alfa = 90;
     beta = 0;
     gama = 180;
     disp3d();
     aa_render(context, params, 0, 0, aa_scrwidth(context), aa_scrheight(context));
-    strobikend();
+    strobe_end();
     bbwait(500000);
 
-    strobikstart();
+    strobe_start();
     alfa = 0;
     disp3d();
     aa_render(context, params, 0, 0, aa_scrwidth(context), aa_scrheight(context));
-    strobikend();
+    strobe_end();
     bbwait(500000);
 
-    strobikstart();
+    strobe_start();
     alfa = 180;
     disp3d();
     aa_render(context, params, 0, 0, aa_scrwidth(context), aa_scrheight(context));
-    strobikend();
+    strobe_end();
     bbwait(500000);
 
-    strobikstart();
+    strobe_start();
     alfa = 270;
     disp3d();
     aa_render(context, params, 0, 0, aa_scrwidth(context), aa_scrheight(context));
-    strobikend();
+    strobe_end();
 
     salpha = 270;
     sbeta = 0;

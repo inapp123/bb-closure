@@ -151,7 +151,7 @@ static void toblack1()
     aa_flush(context);
 }
 
-void devezen1()
+void section_transition_1()
 {
     bckup = (char *) malloc(aa_imgwidth(context) * aa_imgheight(context));
     memcpy(bckup, context->imagebuffer, aa_imgwidth(context) * aa_imgheight(context));
@@ -164,14 +164,14 @@ void devezen1()
     free(bckup1);
 }
 
-void devezen2()
+void section_transition_2()
 {
     tographics();
     drawptr = toblack;
     timestuff(0, NULL, draw, 1000000);
 }
 
-void devezen3()
+void section_transition_3()
 {
     tographics();
     drawptr = incrandom;
@@ -183,7 +183,7 @@ void devezen3()
     params->bright = 0;
 }
 
-void devezen4()
+void section_transition_4()
 {
     tographics();
     drawptr = decontr;

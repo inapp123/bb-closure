@@ -29,7 +29,7 @@
 
 static unsigned char *helpbuffer;
 static unsigned char *text, *text1;
-static int aaval = -1, colorval;
+static int aa_wave = -1, colorval;
 static int sstarttime;
 
 #define DEANTIALIAS(a) (((a)!=0)*255*mul+acolor*(255-mul))>>8;
@@ -52,10 +52,10 @@ static void mydraw(void)
     int x, y;
     unsigned char *pos = context->imagebuffer;
     unsigned char *pos1 = helpbuffer;
-    if (aaval >= 0) {
+    if (aa_wave >= 0) {
 	for (y = 0; y < aa_imgheight(context); y += 2) {
 	    int mul;
-	    mul = (-y) * 8 + aaval;
+	    mul = (-y) * 8 + aa_wave;
 	    if (mul < 0)
 		mul = 0;
 	    if (mul > 255)
@@ -82,7 +82,7 @@ static void mydraw(void)
     }
     else
 	clrscr();
-    drawprujezd(text, starttime);
+    draw_scroll_text(text, starttime);
 }
 
 static void mydraw1(void)
@@ -91,7 +91,7 @@ static void mydraw1(void)
     unsigned char *pos = context->imagebuffer;
     unsigned char *pos1 = helpbuffer;
     int mul2 = 255 * (255 - colorval);
-    if (aaval >= 0) {
+    if (aa_wave >= 0) {
 	for (y = 0; y < aa_imgheight(context); y += 1) {
 	    for (x = 0; x < aa_imgwidth(context); x += 1) {
 		*pos = (*pos1 * colorval + ((*pos1) != 0) * mul2) >> 8;
@@ -103,37 +103,37 @@ static void mydraw1(void)
     }
     else
 	clrscr();
-    drawprujezd(text, starttime);
+    draw_scroll_text(text, starttime);
 }
 
 static void mydraw2(void)
 {
     do3d();
-    drawprujezd(text, starttime);
+    draw_scroll_text(text, starttime);
 }
 
 static void mydraw3(void)
 {
     clrscr();
-    drawlepic(text);
+    draw_from_left(text);
 }
 
 static void mydraw4(void)
 {
     do3d();
-    drawlepic(text);
+    draw_from_left(text);
 }
 
 static void mydraw5(void)
 {
     do3d();
-    drawlevotoc(text, text1, starttime);
+    draw_slide_left(text, text1, starttime);
 }
 
 static void mydraw6(void)
 {
     do3d();
-    drawhorotoc(text, text1, starttime);
+    draw_slide_vertical(text, text1, starttime);
 }
 
 static void mydraw8(void)
@@ -146,12 +146,12 @@ static void mydraw8(void)
 static void mydraw7(void)
 {
     do3d();
-    drawpravotoc(text, text1, starttime);
+    draw_slide_right(text, text1, starttime);
 }
 
-static void decaaval(int i)
+static void inc_aa_wave(int i)
 {
-    aaval += 7 * i;
+    aa_wave += 7 * i;
 }
 
 static void inccolor(int i)
@@ -178,13 +178,13 @@ static void incrandom(int i)
 	params->randomval = (endtime - TIME) * 256 / (endtime - starttime);
 }
 
-static void pauzicka()
+static void pause_3d_scene()
 {
     drawptr = do3d;
     timestuff(0, NULL, draw, 2 * 1000000);
 }
 
-static void stmivac()
+static void fade_scene()
 {
     drawptr = mydraw8;
     timestuff(0, NULL, draw, 2 * 1000000);
@@ -192,7 +192,7 @@ static void stmivac()
 
 void scene5(void)
 {
-    aaval = -1;
+    aa_wave = -1;
     set_zbuff();
     helpbuffer = malloc(aa_imgwidth(context) * aa_imgheight(context));
     alfa = 0;
@@ -209,16 +209,16 @@ void scene5(void)
 
     text = "Supports";
     drawptr = mydraw3;
-    initlepic();
-    timestuff(-60, ctrllepic, draw, 2 * 1000000);
+    init_from_left();
+    timestuff(-60, ctrl_from_left, draw, 2 * 1000000);
 
     drawptr = mydraw;
-    aaval = 0;
+    aa_wave = 0;
     text = "ANTIALIASING";
     timestuff(60, NULL, draw, 5 * 1000000);
 
     text = "";
-    timestuff(-60, decaaval, draw, 3 * 1000000);
+    timestuff(-60, inc_aa_wave, draw, 3 * 1000000);
 
     text = "256 colors-ascii";
     colorval = 0;
@@ -226,19 +226,19 @@ void scene5(void)
     timestuff(-60, inccolor, draw, 6 * 1000000);
 
     sstarttime = TIME;
-    pauzicka();
-    initlepic();
+    pause_3d_scene();
+    init_from_left();
     text = "dithering";
     drawptr = mydraw4;
-    timestuff(-60, ctrllepic, draw, 2 * 1000000);
+    timestuff(-60, ctrl_from_left, draw, 2 * 1000000);
 
-    pauzicka();
+    pause_3d_scene();
     text = "random";
     drawptr = mydraw2;
     timestuff(-60, incrandom, draw, 3 * 1000000);
 
     params->randomval = 0;
-    pauzicka();
+    pause_3d_scene();
     text1 = " ";
     text = "Error";
     drawptr = mydraw6;
@@ -256,7 +256,7 @@ void scene5(void)
     timestuff(60, NULL, draw, 1 * 1000000);
     params->randomval = 0;
 
-    pauzicka();
+    pause_3d_scene();
     text1 = " ";
     text = "Floyd-";
     drawptr = mydraw5;
@@ -273,7 +273,7 @@ void scene5(void)
     drawptr = mydraw5;
     timestuff(60, NULL, draw, 1 * 1000000);
 
-    pauzicka();
+    pause_3d_scene();
     text1 = " ";
     text = "Gamma ";
     drawptr = mydraw7;
@@ -290,7 +290,7 @@ void scene5(void)
     drawptr = mydraw7;
     timestuff(-60, decgama, draw, 1.5 * 1000000);
     params->gamma = 1.0;
-    pauzicka();
-    stmivac();
+    pause_3d_scene();
+    fade_scene();
     centerx = 0;
 }

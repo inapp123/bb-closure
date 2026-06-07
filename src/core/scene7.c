@@ -14,7 +14,7 @@
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be ufade_in_enabledul,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -65,9 +65,9 @@
 #define ANIMATION 1
 #define NEW_IMAGE 2
 #define UNINTERRUPTIBLE 3
-#define xstoc(x)        (((number_t) (zcontext->s.nc + (x) * ((zcontext->s.mc - zcontext->s.nc) \
+#define screen_to_ctx_x(x)        (((number_t) (zcontext->s.nc + (x) * ((zcontext->s.mc - zcontext->s.nc) \
                                 / (number_t) zcontext->width))))
-#define ystoc(y)        (((number_t) (zcontext->s.ni + (y) * ((zcontext->s.mi - zcontext->s.ni) \
+#define screen_to_ctx_y(y)        (((number_t) (zcontext->s.ni + (y) * ((zcontext->s.mi - zcontext->s.ni) \
                                 / (number_t) zcontext->height))))
 
 #define FRAMETIME (1000000/FRAMERATE)
@@ -341,7 +341,7 @@ static int ui_mouse()
 	    break;
 	case BUTTON2:		/* button 2 */
 	    {
-		number_t x = xstoc(mousex), y = ystoc(mousey);
+		number_t x = screen_to_ctx_x(mousex), y = screen_to_ctx_y(mousey);
 		if (pressed && (oldx != x || oldy != y)) {
 		    zcontext->s.nc -= x - oldx;
 		    zcontext->s.mc -= x - oldx;
@@ -352,7 +352,7 @@ static int ui_mouse()
 		    }
 		}
 		pressed = 1;
-		oldx = xstoc(mousex), oldy = ystoc(mousey);
+		oldx = screen_to_ctx_x(mousex), oldy = screen_to_ctx_y(mousey);
 	    }
 	    break;
 	default:
@@ -380,8 +380,8 @@ static int ui_mouse()
     else if (step < -maxstep)
 	step = -maxstep;
     if (step) {
-	number_t x = xstoc(mousex);
-	number_t y = ystoc(mousey);
+	number_t x = screen_to_ctx_x(mousex);
+	number_t y = screen_to_ctx_y(mousey);
 	number_t mmul = pow((double) (1 + step), (double) mul);
 	zcontext->s.mc = x + (zcontext->s.mc - x) * (mmul);
 	zcontext->s.nc = x + (zcontext->s.nc - x) * (mmul);
@@ -423,19 +423,19 @@ static void flip_buffers(void)
 {
     context->imagebuffer = zcontext->back;
 }
-static int sef, eef;
+static int fade_in_enabled, fade_out_enabled;
 static double is, ie, rs, re;
-static void juliov(void)
+static void update_julia(void)
 {
     double time = (TIME - starttime) / (double) (endtime - starttime);
-    if (sef) {
+    if (fade_in_enabled) {
 	if (TIME < starttime + BTIME) {
 	    params->bright = 255 - (TIME - starttime) * 255 / BTIME;
 	}
 	else
 	    params->bright = 0;
     }
-    if (eef) {
+    if (fade_out_enabled) {
 	if (TIME > endtime - BTIME) {
 	    params->bright = -255 + (endtime - TIME) * 255 / BTIME;
 	}
@@ -445,12 +445,12 @@ static void juliov(void)
 static void mydraw()
 {
     clrscr();
-    dvojprujezd(starttime, zoomed, "Times");
+    dual_scroll_text(starttime, zoomed, "Times");
 }
 static void mydraw1()
 {
     clrscr();
-    drawlepic("Zoomed");
+    draw_from_left("Zoomed");
 }
 
 
@@ -514,9 +514,9 @@ void scene6(void)
     maintimer = NULL;
     params->bright = 0;
     params->randomval = 0;
-    initlepic();
+    init_from_left();
     drawptr = mydraw1;
-    timestuff(-60, ctrllepic, draw, 2000000);
+    timestuff(-60, ctrl_from_left, draw, 2000000);
     drawptr = mydraw;
     /*timestuff(60, NULL, draw, 4 * 1000000); */
     /*timestuff(20, blur, draw, 4 * 1000000); */
@@ -557,34 +557,34 @@ void scene7(void)
     zcontext->coloringmode = 0;
     zcontext->plane = 0;
     starttime = endtime;
-    sef = 1;
-    eef = 0;
+    fade_in_enabled = 1;
+    fade_out_enabled = 0;
     is = -2;
     rs = -2;
     ie = 2;
     re = 2;
-    timestuff(0, NULL, juliov, ETIME2);
-    sef = 0;
-    eef = 0;
+    timestuff(0, NULL, update_julia, ETIME2);
+    fade_in_enabled = 0;
+    fade_out_enabled = 0;
     is = 2;
     rs = 2;
     ie = 0;
     re = -2;
-    timestuff(0, NULL, juliov, ETIME2);
-    sef = 0;
-    eef = 0;
+    timestuff(0, NULL, update_julia, ETIME2);
+    fade_in_enabled = 0;
+    fade_out_enabled = 0;
     is = 0;
     rs = -2;
     ie = 0;
     re = 2;
-    timestuff(0, NULL, juliov, ETIME2);
-    sef = 0;
-    eef = 1;
+    timestuff(0, NULL, update_julia, ETIME2);
+    fade_in_enabled = 0;
+    fade_out_enabled = 1;
     is = 0;
     rs = 2;
     ie = -1;
     re = -5.0;
-    timestuff(0, NULL, juliov, ETIME2);
+    timestuff(0, NULL, update_julia, ETIME2);
     context->imagebuffer = buffer1;
     free_context(zcontext);
     zcontext = NULL;
@@ -625,31 +625,31 @@ void scene9(void)
     zcontext->coloringmode = 0;
     zcontext->plane = 0;
     starttime = endtime;
-    sef = 1;
-    eef = 0;
+    fade_in_enabled = 1;
+    fade_out_enabled = 0;
     is = -1;
     rs = -1;
     ie = 2;
     re = -2;
-    timestuff(0, NULL, juliov, ETIME2);
-    sef = 0;
-    eef = 0;
+    timestuff(0, NULL, update_julia, ETIME2);
+    fade_in_enabled = 0;
+    fade_out_enabled = 0;
     is = ie, rs = re;
     ie = 2;
     re = 2;
-    timestuff(0, NULL, juliov, ETIME2);
-    sef = 0;
-    eef = 0;
+    timestuff(0, NULL, update_julia, ETIME2);
+    fade_in_enabled = 0;
+    fade_out_enabled = 0;
     is = ie, rs = re;
     ie = -2;
     re = 2;
-    timestuff(0, NULL, juliov, ETIME2);
-    sef = 0;
-    eef = 1;
+    timestuff(0, NULL, update_julia, ETIME2);
+    fade_in_enabled = 0;
+    fade_out_enabled = 1;
     is = ie, rs = re;
     ie = 2;
     re = -2;
-    timestuff(0, NULL, juliov, ETIME2);
+    timestuff(0, NULL, update_julia, ETIME2);
     context->imagebuffer = buffer1;
     params->bright = 0;
     params->dither = AA_FLOYD_S;

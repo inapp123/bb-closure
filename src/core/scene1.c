@@ -83,7 +83,7 @@ static void drawwait4()
     centerprint(aa_imgwidth(context) / 4 - dist * aa_imgwidth(context), pos, 1.1 + delta / 2, 255, "B", 0);
     centerprint(3 * aa_imgwidth(context) / 4 + dist * aa_imgwidth(context), aa_imgheight(context) - pos, 1.1 + delta / 2, 255, "B", 0);
 }
-static void hlaska(char *text, float n)
+static void flash_title(char *text, float n)
 {
     clrscr();
     centerprint(aa_imgwidth(context) / 2, aa_imgheight(context) / 2, n, 255, text, 3);
@@ -221,37 +221,37 @@ static void makepos2(int n)
     }
 }
 
-static void strobikuj(int n)
+static void strobe_brighten(int n)
 {
     params->bright += n * 50;
 }
 
-void strobikstart(void)
+void strobe_start(void)
 {
     int ditherbckup = params->dither;
     if (context->driver->print != NULL)
 	params->dither = AA_NONE;
     params->bright = 0;
-    timestuff(-60, strobikuj, draw, 1000000 / 15);
+    timestuff(-60, strobe_brighten, draw, 1000000 / 15);
     params->bright = 255;
     params->dither = ditherbckup;
     draw();
 }
 
-void destrobikuj(int n)
+void strobe_dim(int n)
 {
     params->bright >>= n;
 }
 
-void strobikend(void)
+void strobe_end(void)
 {
-    /*timestuff(60, destrobikuj, draw, 1000000 / 5); */
-    timestuff(-60, destrobikuj, draw, 1000000 / 3.5);
+    /*timestuff(60, strobe_dim, draw, 1000000 / 5); */
+    timestuff(-60, strobe_dim, draw, 1000000 / 3.5);
     params->bright = 0;
     draw();
 }
 
-static void blazinec()
+static void intro_strobe_titles()
 {
     int i;
 
@@ -304,43 +304,43 @@ static void blazinec()
     if (context->driver->print != NULL)
 	params->dither = AA_NONE;
     for (i = 0; i < NTEXT; i++) {
-	strobikstart();
+	strobe_start();
 	params->randomval = 0;
-	hlaska(text[i], sizes[i]);
-	strobikend();
+	flash_title(text[i], sizes[i]);
+	strobe_end();
     }
-    strobikstart();
+    strobe_start();
     params->dither = AA_FLOYD_S;
     draw();
 }
 
 extern int dualmode;
 
-void vezen(struct image *i1, struct image *i2, struct image *i3, struct image *i4)
+void play_image_carousel(struct image *i1, struct image *i2, struct image *i3, struct image *i4)
 {
     drawptr = NULL;
     dualmode = 0;
-    strobikstart();
+    strobe_start();
     clrscr();
     dispimg(i1, dual);
-    strobikend();
+    strobe_end();
     bbwait(500000);
-    strobikstart();
+    strobe_start();
     clrscr();
     dispimg(i2, dual);
-    strobikend();
+    strobe_end();
     bbwait(500000);
-    strobikstart();
+    strobe_start();
     clrscr();
     dispimg(i3, dual);
-    strobikend();
+    strobe_end();
     bbwait(500000);
-    strobikstart();
+    strobe_start();
     clrscr();
     dispimg(i4, dual);
     if (dual)
 	dispimg(i4, dual);
-    strobikend();
+    strobe_end();
     draw();
     bbupdate();
     bbwait(1000000);
@@ -389,7 +389,7 @@ void scene1(void)
     timestuff(60, makepos1, draw, 0.2 * 1000000);
     timestuff(60, makepos2, draw, 0.3 * 1000000);
     drawptr = NULL;
-    blazinec();
+    intro_strobe_titles();
 }
 
 void introscreen(void)

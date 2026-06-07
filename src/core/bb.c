@@ -300,7 +300,7 @@ static void play_full_demo(void) {
   if (quitnow)
     return;
   aa_resize(context);
-  vezen(&kal1, &kal2, &kal3, &kal4);
+  play_image_carousel(&kal1, &kal2, &kal3, &kal4);
   messager("KAL'TSIT known as Kal'tsit, Ama-10, Mon3tr's keeper\n"
            "birth: classified, Rhodes Island, sex: female\n"
            "\n"
@@ -312,7 +312,7 @@ static void play_full_demo(void) {
            "2021 - Released to the roster as a six-star Medic\n"
            "\n"
            "Contact address: via Doctor, or deploy Mon3tr");
-  devezen2();
+  section_transition_2();
   aa_resize(context);
   scene4();
   aa_resize(context);
@@ -320,7 +320,7 @@ static void play_full_demo(void) {
   aa_resize(context);
   if (quitnow)
     return;
-  vezen(&ami1, &ami2, &ami3, &ami4);
+  play_image_carousel(&ami1, &ami2, &ami3, &ami4);
   messager("AMIYA known as Amiya, Rhodes Island's public face\n"
            "birth: Dec 23, Rim Billiton, sex: female\n"
            "\n"
@@ -332,7 +332,7 @@ static void play_full_demo(void) {
            "2021 - Still asking the Doctor to show her the way forward\n"
            "\n"
            "Contact address: the bridge, or leave a note for Doctor");
-  devezen3();
+  section_transition_3();
   aa_resize(context);
   scene8();
   aa_resize(context);
@@ -341,7 +341,7 @@ static void play_full_demo(void) {
   if (quitnow)
     return;
   aa_resize(context);
-  vezen(&doc1, &doc2, &doc3, &doc4);
+  play_image_carousel(&doc1, &doc2, &doc3, &doc4);
   messager("THE DOCTOR known as Doctor, Rhodes Island field commander\n"
            "birth: classified, unknown, sex: unknown\n"
            "\n"
@@ -355,7 +355,7 @@ static void play_full_demo(void) {
            "Contact address: command bridge; no restrictions on channel");
   bbupdate();
   starttime = endtime = TIME;
-  devezen1();
+  section_transition_1();
   aa_resize(context);
   if (quitnow)
     return;
@@ -369,7 +369,7 @@ static void play_full_demo(void) {
     return;
   aa_resize(context);
   scene10();
-  vezen(&clo1, &clo2, &clo3, &clo4);
+  play_image_carousel(&clo1, &clo2, &clo3, &clo4);
   messager("CLOSURE known as Closure, Chief Engineer, Procurement boss\n"
            "birth: Dec 10, Kazdel, sex: female\n"
            "\n"
@@ -380,9 +380,9 @@ static void play_full_demo(void) {
            "\n"
            "2021 - Still selling snacks through special channels\n"
            "\n"
-           "Contact address: Engineering; pay your invoices first");
+           "Contact address: Engineering Dept.; pay your invoices first");
   aa_resize(context);
-  devezen4();
+  section_transition_4();
   if (quitnow)
     return;
   aa_resize(context);

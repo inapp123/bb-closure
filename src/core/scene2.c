@@ -46,7 +46,7 @@ void blur(int n)
     }
 }
 
-void dvojprujezd(int starttime, char *text2, char *text1)
+void dual_scroll_text(int starttime, char *text2, char *text1)
 {
     int pos = (getwidth(2) * strlen(text1) + 1);
     centerprint(-pos / 2 + (aa_imgwidth(context) + pos * 1.2) * STATE / (endtime - starttime), 2 * aa_imgheight(context) / 3, 2, 255, text1, 0);
@@ -54,7 +54,7 @@ void dvojprujezd(int starttime, char *text2, char *text1)
     centerprint(aa_imgwidth(context) + pos / 2 - (aa_imgwidth(context) + pos * 1.2) * STATE / (endtime - starttime), aa_imgheight(context) / 3, 2, 255, text2, 0);
 }
 
-static void dvojprujezd2(int starttime, char *text1, char *text2)
+static void dual_scroll_text_alt(int starttime, char *text1, char *text2)
 {
     int pos = (getwidth(2) * strlen(text1) + 1);
     centerprint(-pos / 2 + (aa_imgwidth(context) + pos * 1.2) * STATE / (endtime - starttime), aa_imgheight(context) / 3, 2, 255, text1, 0);
@@ -81,7 +81,7 @@ static float xpos, xpos1, f, t;
 #define G 0.02
 #define AMP 40
 
-void ctrllepic(int i)
+void ctrl_from_left(int i)
 {
     for (; i; i--) {
 	t++;
@@ -103,7 +103,7 @@ void ctrllepic(int i)
     }
 }
 
-void drawlepic(char *mesg)
+void draw_from_left(char *mesg)
 {
     print(0, xpos1 * aa_imgheight(context), aa_imgwidth(context) / (double) strlen(mesg), aa_imgheight(context) * xpos, font, 255, mesg);
 }
@@ -121,7 +121,7 @@ void drawzoomer(char *mesg, int starttime, int pos)
 
 #define ETIME2 1000000
 
-void drawlevotoc(char *mesg, char *mesg1, int starttime)
+void draw_slide_left(char *mesg, char *mesg1, int starttime)
 {
     if (STATE < ETIME2 && STATE > 0) {
 	print(0, 0, aa_imgwidth(context) / (double) strlen(mesg) * ((float) STATE / ETIME2), aa_imgheight(context), font, 255, mesg);
@@ -131,7 +131,7 @@ void drawlevotoc(char *mesg, char *mesg1, int starttime)
 	print(0, 0, aa_imgwidth(context) / (double) strlen(mesg), aa_imgheight(context), font, 255, mesg);
 }
 
-void drawpravotoc(char *mesg, char *mesg1, int starttime)
+void draw_slide_right(char *mesg, char *mesg1, int starttime)
 {
     if (STATE < ETIME2 && STATE > 0) {
 	print(0, 0, aa_imgwidth(context) / (double) strlen(mesg1) * (1 - (float) STATE / ETIME2), aa_imgheight(context), font, 255, mesg1);
@@ -141,7 +141,7 @@ void drawpravotoc(char *mesg, char *mesg1, int starttime)
 	print(0, 0, aa_imgwidth(context) / (double) strlen(mesg), aa_imgheight(context), font, 255, mesg);
 }
 
-void drawhorotoc(char *mesg, char *mesg1, int starttime)
+void draw_slide_vertical(char *mesg, char *mesg1, int starttime)
 {
     if (STATE < ETIME2 && STATE > 0) {
 	print(0, 0, aa_imgwidth(context) / strlen(mesg), aa_imgheight(context) * ((float) STATE / ETIME2), font, 255, mesg);
@@ -153,7 +153,7 @@ void drawhorotoc(char *mesg, char *mesg1, int starttime)
 
 #define LTIME 200000
 
-void drawprujezd(char *mesg, int starttime)
+void draw_scroll_text(char *mesg, int starttime)
 {
     double height = aa_imgheight(context) / 3 + aa_imgheight(context) / 4 * cos(STATE / (double) LTIME);
     double width = (double) aa_imgwidth(context) * 0.75 * 2.0 / 3.0 / 3;
@@ -161,7 +161,7 @@ void drawprujezd(char *mesg, int starttime)
     print(pos + height, (aa_imgheight(context) - height) / 2, width, height, font, 255, mesg);
 }
 
-void initlepic()
+void init_from_left()
 {
     t = 0;
     f = 0;
@@ -169,7 +169,7 @@ void initlepic()
     xpos1 = 0;
 }
 
-static void messaguj()
+static void draw_zoom_messages()
 {
     clrscr();
     drawzoomer(lastmesg, starttime - ETIME, lastpos);
@@ -179,13 +179,13 @@ static void messaguj()
 static void mydraw()
 {
     clrscr();
-    dvojprujezd2(starttime, "Greetings", "To");
-    /*drawpravotoc(mesg, lastmesg, starttime); */
+    dual_scroll_text_alt(starttime, "Greetings", "To");
+    /*draw_slide_right(mesg, lastmesg, starttime); */
 }
 
 void scene2(void)
 {
-    char *pokec[] =
+    char *name_list[] =
     {
 	"Mostima",
 	"Fiametta",
@@ -207,18 +207,18 @@ void scene2(void)
     drawptr = mydraw;
     timestuff(60, NULL, draw, 2.75 * 1000000);
 
-    drawptr = messaguj;
+    drawptr = draw_zoom_messages;
     mesg = "";
     pos = 2;
     lastpos = 1;
-    for (i = 0; i < sizeof(pokec) / sizeof(char *); i++) {
+    for (i = 0; i < sizeof(name_list) / sizeof(char *); i++) {
 	lastpos = pos;
 	pos++;
 	if (pos > 4)
 	    pos = 2;
 	lastmesg = mesg;
-	mesg = pokec[i];
-	if (i == sizeof(pokec) / sizeof(char *) - 1)
+	mesg = name_list[i];
+	if (i == sizeof(name_list) / sizeof(char *) - 1)
 	     timestuff(0, NULL, draw, 3 * ETIME);
 	else
 	    timestuff(0, NULL, draw, ETIME);
