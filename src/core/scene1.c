@@ -44,6 +44,12 @@ char *text;
 static int cursorx, cursory;
 void (*drawptr) ();
 
+void bb_reset_draw_state(void)
+{
+    text = "";
+    drawptr = NULL;
+}
+
 #define HEXA (rand()&2?'A'+rand()%6:'0'+rand()%10)
 
 static void drawwait()
@@ -87,7 +93,8 @@ void draw(void)
     if (drawptr != NULL)
 	drawptr();
     aa_render(context, params, 0, 0, aa_imgwidth(context), aa_imgheight(context));
-    aa_puts(context, (aa_scrwidth(context) - strlen(text)) / 2, aa_scrheight(context) / 2, AA_SPECIAL, text);
+    if (text != NULL)
+	aa_puts(context, (aa_scrwidth(context) - strlen(text)) / 2, aa_scrheight(context) / 2, AA_SPECIAL, text);
     aa_flush(context);
 }
 

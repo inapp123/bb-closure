@@ -41,6 +41,7 @@ extern int TIME;
 extern aa_renderparams *params;
 extern tl_timer *scenetimer;
 extern void (*drawptr) (void);
+void bb_reset_draw_state(void);
 extern struct font *font;
 extern void blur(int);
 extern int bbsound, soundcounter;

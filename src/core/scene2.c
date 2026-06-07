@@ -198,7 +198,7 @@ void scene2(void)
 	"Astesia",
 	"Aosta",
 	".....",
-	"Shirogane",
+	"Hypergryph",
 	"",
 	"!?!",
     };

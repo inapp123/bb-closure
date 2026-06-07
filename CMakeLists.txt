@@ -95,6 +95,9 @@ option(AALIB_BACKEND_CURSES "Enable Curses display backend" ON)
 # their display backend; GPM is independent)
 option(AALIB_MOUSE_GPM "Enable GPM mouse backend (Linux)" OFF)
 
+# Music
+option(BB_MUSIC "Enable music" OFF)
+
 set(AALIB_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/aalib/src)
 
 set(AALIB_SOURCES
@@ -301,17 +304,19 @@ message(STATUS "AA-lib display backends: ${_aalib_backends_str}")
 
 # ── Optional: libmikmod ─────────────────────────────────────────────
 
-find_path(LIBMIKMOD_INCLUDE_DIR mikmod.h)
-find_library(LIBMIKMOD_LIBRARY NAMES mikmod)
+if(BB_MUSIC)
+    find_path(LIBMIKMOD_INCLUDE_DIR mikmod.h)
+    find_library(LIBMIKMOD_LIBRARY NAMES mikmod)
 
-if(LIBMIKMOD_INCLUDE_DIR AND LIBMIKMOD_LIBRARY)
-    set(HAVE_LIBMIKMOD 1)
-    set(SOUNDFILES "bb.s3m;bb2.s3m;bb3.s3m")
-    message(STATUS "Found libmikmod: ${LIBMIKMOD_LIBRARY} (sound support enabled)")
-else()
-    set(HAVE_LIBMIKMOD 0)
-    set(SOUNDFILES "")
-    message(STATUS "libmikmod not found - sound support disabled")
+    if(LIBMIKMOD_INCLUDE_DIR AND LIBMIKMOD_LIBRARY)
+        set(HAVE_LIBMIKMOD 1)
+        set(SOUNDFILES "bb.s3m;bb2.s3m;bb3.s3m")
+        message(STATUS "Found libmikmod: ${LIBMIKMOD_LIBRARY} (sound support enabled)")
+    else()
+        set(HAVE_LIBMIKMOD 0)
+        set(SOUNDFILES "")
+        message(STATUS "libmikmod not found - sound support disabled")
+    endif()
 endif()
 
 # ── Generate config header ───────────────────────────────────────────
