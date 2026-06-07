@@ -267,6 +267,8 @@ int __aa_X_getsize(struct aa_context *c,struct xdriverdata *d)
     d->pixelwidth = px;
     d->pixelheight = py;
     if (tmp) {
+	d->width = d->pixelwidth / d->realfontwidth;
+	d->height = d->pixelheight / d->fontheight;
 	if (d->pixmapmode)
 	    XFreePixmap(d->dp, d->pi);
 	if (!getenv("AABlink"))
@@ -427,6 +429,27 @@ __AA_CONST static int Black[] =
 {0, 0, 0, 0, 1, 1};
 
 
+static void X_invalidate_cache (struct xdriverdata *d)
+{
+    if (d->previoust != NULL)
+	free (d->previoust), free (d->previousa);
+    d->previoust = NULL;
+    d->previousa = NULL;
+}
+
+static void X_sync_screen (aa_context *c, struct xdriverdata *d)
+{
+    int scr_w = aa_scrwidth (c);
+    int scr_h = aa_scrheight (c);
+
+    if (scr_w <= 0 || scr_h <= 0)
+	return;
+    if (d->previoust != NULL && (scr_w != d->width || scr_h != d->height))
+	X_invalidate_cache (d);
+    d->width = scr_w;
+    d->height = scr_h;
+}
+
 static void X_flush(aa_context * c)
 {
     struct xdriverdata *d=c->driverdata;
@@ -435,6 +458,13 @@ static void X_flush(aa_context * c)
     int l, same;
     int s = 0;
     int pos;
+    int scr_w, scr_h;
+
+    X_sync_screen (c, d);
+    scr_w = d->width;
+    scr_h = d->height;
+    if (scr_w <= 0 || scr_h <= 0)
+	return;
     attr = AA_NORMAL;
     alloctables(d);
     drawed = 0;
@@ -444,20 +474,20 @@ static void X_flush(aa_context * c)
     nrectangles[2] = 0;
     nrectangles[3] = 0;
     if (d->previoust == NULL) {
-	d->previoust = malloc(d->width * d->height);
-	d->previousa = calloc(d->width * d->height, 1);
-	memset(d->previoust, ' ', d->width * d->height);
+	d->previoust = malloc ((size_t) scr_w * scr_h);
+	d->previousa = calloc ((size_t) scr_w * scr_h, 1);
+	memset(d->previoust, ' ', (size_t) scr_w * scr_h);
     }
-    for (y = 0; y < aa_scrheight(c); y++) {
+    for (y = 0; y < scr_h; y++) {
 	s = l = 0;
 	xs = 0;
 	ys = y;
-	for (x = 0; x < aa_scrwidth(c); x++) {
-	    pos = x + y * aa_scrwidth(c);
+	for (x = 0; x < scr_w; x++) {
+	    pos = x + y * scr_w;
 	    if (s > 5 || (c->attrbuffer[pos] != attr && (c->textbuffer[pos] != ' ' || Black[c->attrbuffer[pos]] || Black[attr]))) {
 		if (l - s)
 		    MyDrawString(d,attr, xs, ys,
-			&c->textbuffer[xs + ys * aa_scrwidth(c)], l - s);
+			&c->textbuffer[xs + ys * scr_w], l - s);
 		attr = c->attrbuffer[pos];
 		s = l = 0;
 		xs = x;
@@ -479,11 +509,11 @@ static void X_flush(aa_context * c)
 	}
 	if (l - s)
 	    MyDrawString(d,attr, xs, ys,
-			 &c->textbuffer[xs + ys * aa_scrwidth(c)], l - s);
+			 &c->textbuffer[xs + ys * scr_w], l - s);
     }
     if (drawed) {
-	memcpy(d->previousa, c->attrbuffer, d->width * d->height);
-	memcpy(d->previoust, c->textbuffer, d->width * d->height);
+	memcpy(d->previousa, c->attrbuffer, (size_t) scr_w * scr_h);
+	memcpy(d->previoust, c->textbuffer, (size_t) scr_w * scr_h);
 	if (nrectangles[0])
 	    XFillRectangles(d->dp, dr, d->blackGC, &rectangles(0, 0), nrectangles[0]);
 	if (nrectangles[1])
@@ -539,7 +569,7 @@ static void X_gotoxy(aa_context * c, int x, int y)
     struct xdriverdata *d=c->driverdata;
     if (d->Xpos != x || d->Ypos != y) {
 	if (d->previoust != NULL)
-	    d->previoust[d->Ypos * d->width + d->Xpos] = 255;
+	    d->previoust[d->Ypos * aa_scrwidth (c) + d->Xpos] = 255;
 	d->Xpos = x;
 	d->Ypos = y;
 	X_flush(c);

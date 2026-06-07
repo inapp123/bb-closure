@@ -8,6 +8,12 @@ __AA_CONST char * __AA_CONST aa_help =
 #ifdef LINUX_DRIVER
 "linux "
 #endif
+#ifdef FBDEV_DRIVER
+"fbdev "
+#endif
+#ifdef DRM_DRIVER
+"drm "
+#endif
 #ifdef SLANG_DRIVER
 "slang "
 #endif

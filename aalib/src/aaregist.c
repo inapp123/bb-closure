@@ -17,6 +17,9 @@ __AA_CONST struct aa_driver * __AA_CONST aa_drivers[] =
 #ifdef FBDEV_DRIVER
     &fbdev_d,
 #endif
+#ifdef DRM_DRIVER
+    &drm_d,
+#endif
 #ifdef SLANG_DRIVER
     &slang_d,
 #endif

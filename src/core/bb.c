@@ -222,6 +222,7 @@
 	 printf("Failed to initialize keyboard\n");
 	 exit(3);
 	 }
+	 aa_resizehandler (context, (void (*) (aa_context *)) aa_resize);
 	 if (argc == 2 && !strcmp(argv[1], "-loop"))
 	 loopmode = 1;
 	 else if (argc == 2)

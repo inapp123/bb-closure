@@ -8,6 +8,13 @@ include(CheckSymbolExists)
 include(GNUInstallDirs)
 
 option(SANITIZE_ADDRESS "Enable address sanitizer" OFF)
+option(BB_DEBUG "Enable debug build (-g -O0, for gdb/lldb)" OFF)
+
+if(BB_DEBUG)
+    message(STATUS "Debug build enabled (-g -O0)")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -fno-omit-frame-pointer")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g")
+endif()
 
 if(SANITIZE_ADDRESS)
     message(STATUS "Enabling address sanitizer")
@@ -69,26 +76,35 @@ if(HAVE_STDLIB_H AND HAVE_STDARG_H AND HAVE_STRING_H AND HAVE_FLOAT_H)
     set(STDC_HEADERS 1)
 endif()
 
-# ── Bundled AA-lib (stdout/stderr + optional fbdev backend) ───────────
+# ── Bundled AA-lib ────────────────────────────────────────────────────
 #
 # We compile a stripped-down copy of aalib from the in-tree aalib/ directory.
-# The always-on backends are stdout/stderr display + stdin keyboard.
-# On Linux with <linux/fb.h>, we also compile a native fbdev backend that
-# uses only kernel ioctls + mmap (no extra user-space dependencies).
-# Other backends (X11, curses, slang, Linux console, gpm mouse, DOS, OS/2)
-# are intentionally excluded so that bb has no external aalib dependency.
+# stdout/stderr display + stdin keyboard are always enabled.
+# Other display/kbd/mouse backends are controlled by the AALIB_BACKEND_*
+# and AALIB_MOUSE_* options below.
+
+# Display backends
+option(AALIB_BACKEND_FBDEV  "Enable Linux fbdev display backend" ON)
+option(AALIB_BACKEND_DRM    "Enable Linux DRM/KMS display backend (libdrm)" ON)
+option(AALIB_BACKEND_X11    "Enable X11 display backend" ON)
+option(AALIB_BACKEND_LINUX  "Enable Linux console display backend" ON)
+option(AALIB_BACKEND_SLANG  "Enable Slang display backend" ON)
+option(AALIB_BACKEND_CURSES "Enable Curses display backend" ON)
+
+# Mouse backends (keyboard companions for X11/Slang/Curses/Linux follow
+# their display backend; GPM is independent)
+option(AALIB_MOUSE_GPM "Enable GPM mouse backend (Linux)" OFF)
 
 set(AALIB_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/aalib/src)
 
 set(AALIB_SOURCES
     # core
     ${AALIB_SRC_DIR}/aalib.c
-    ${AALIB_SRC_DIR}/aaregist.c      # display driver registry (stdout + stderr)
-    ${AALIB_SRC_DIR}/aakbdreg.c      # kbd driver registry (stdin)
-    # display backends (only stdout / stderr)
+    ${AALIB_SRC_DIR}/aaregist.c
+    ${AALIB_SRC_DIR}/aakbdreg.c
+    ${AALIB_SRC_DIR}/aamoureg.c
+    # always-on display + kbd
     ${AALIB_SRC_DIR}/aastdout.c
-    ${AALIB_SRC_DIR}/aafbdev.c
-    # kbd backend
     ${AALIB_SRC_DIR}/aastdin.c
     # in-memory / save drivers
     ${AALIB_SRC_DIR}/aamem.c
@@ -133,8 +149,133 @@ set(AALIB_SOURCES
     ${AALIB_SRC_DIR}/fontx16.c
 )
 
+set(AALIB_DEFS "")
+set(AALIB_LIBS "")
+set(AALIB_ENABLED_BACKENDS "stdout stderr")
+
+# ── fbdev ────────────────────────────────────────────────────────────
+if(AALIB_BACKEND_FBDEV)
+    if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND HAVE_LINUX_FB_H)
+        list(APPEND AALIB_SOURCES ${AALIB_SRC_DIR}/aafbdev.c)
+        list(APPEND AALIB_DEFS FBDEV_DRIVER)
+        list(APPEND AALIB_ENABLED_BACKENDS fbdev)
+    elseif(AALIB_BACKEND_FBDEV)
+        message(WARNING "AALIB_BACKEND_FBDEV requested but linux/fb.h not found; disabled")
+    endif()
+endif()
+
+# ── DRM/KMS (libdrm) ─────────────────────────────────────────────────
+if(AALIB_BACKEND_DRM)
+    find_package(PkgConfig QUIET)
+    if(PKG_CONFIG_FOUND)
+        pkg_check_modules(LIBDRM libdrm)
+    endif()
+    if(LIBDRM_FOUND)
+        list(APPEND AALIB_SOURCES ${AALIB_SRC_DIR}/aadrm.c)
+        list(APPEND AALIB_DEFS DRM_DRIVER)
+        list(APPEND AALIB_LIBS ${LIBDRM_LIBRARIES})
+        list(APPEND AALIB_ENABLED_BACKENDS drm)
+    else()
+        message(WARNING "AALIB_BACKEND_DRM requested but libdrm not found; disabled")
+    endif()
+endif()
+
+# ── X11 ──────────────────────────────────────────────────────────────
+if(AALIB_BACKEND_X11)
+    find_package(X11)
+    if(X11_FOUND)
+        list(APPEND AALIB_SOURCES
+            ${AALIB_SRC_DIR}/aax.c
+            ${AALIB_SRC_DIR}/aaxkbd.c
+            ${AALIB_SRC_DIR}/aaxmouse.c)
+        list(APPEND AALIB_DEFS X11_DRIVER X11_KBDDRIVER X11_MOUSEDRIVER)
+        list(APPEND AALIB_LIBS ${X11_LIBRARIES})
+        list(APPEND AALIB_ENABLED_BACKENDS x11)
+    else()
+        message(WARNING "AALIB_BACKEND_X11 requested but X11 not found; disabled")
+    endif()
+endif()
+
+# ── Linux console ────────────────────────────────────────────────────
+if(AALIB_BACKEND_LINUX)
+    if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        list(APPEND AALIB_SOURCES
+            ${AALIB_SRC_DIR}/aalinux.c
+            ${AALIB_SRC_DIR}/aalinuxkbd.c)
+        list(APPEND AALIB_DEFS LINUX_DRIVER LINUX_KBDDRIVER)
+        list(APPEND AALIB_ENABLED_BACKENDS linux)
+    else()
+        message(WARNING "AALIB_BACKEND_LINUX requested but not on Linux; disabled")
+    endif()
+endif()
+
+# ── Slang ────────────────────────────────────────────────────────────
+if(AALIB_BACKEND_SLANG)
+    find_library(SLANG_LIBRARY NAMES slang)
+    find_path(SLANG_INCLUDE_DIR slang.h)
+    if(SLANG_LIBRARY AND SLANG_INCLUDE_DIR)
+        list(APPEND AALIB_SOURCES
+            ${AALIB_SRC_DIR}/aaslang.c
+            ${AALIB_SRC_DIR}/aaslnkbd.c)
+        list(APPEND AALIB_DEFS SLANG_DRIVER SLANG_KBDDRIVER)
+        list(APPEND AALIB_LIBS ${SLANG_LIBRARY})
+        list(APPEND AALIB_ENABLED_BACKENDS slang)
+    else()
+        message(WARNING "AALIB_BACKEND_SLANG requested but libslang not found; disabled")
+    endif()
+endif()
+
+# ── Curses ───────────────────────────────────────────────────────────
+if(AALIB_BACKEND_CURSES)
+    find_package(Curses)
+    if(CURSES_FOUND)
+        list(APPEND AALIB_SOURCES
+            ${AALIB_SRC_DIR}/aacurses.c
+            ${AALIB_SRC_DIR}/aacurkbd.c
+            ${AALIB_SRC_DIR}/aacurmou.c)
+        list(APPEND AALIB_DEFS CURSES_DRIVER CURSES_KBDDRIVER)
+        if(CURSES_HAVE_MOUSE)
+            list(APPEND AALIB_DEFS CURSES_MOUSEDRIVER)
+        endif()
+        if(CURSES_NCURSES_VERSION)
+            list(APPEND AALIB_DEFS USE_NCURSES)
+        else()
+            list(APPEND AALIB_DEFS USE_CURSES)
+        endif()
+        list(APPEND AALIB_LIBS ${CURSES_LIBRARIES})
+        list(APPEND AALIB_ENABLED_BACKENDS curses)
+    else()
+        message(WARNING "AALIB_BACKEND_CURSES requested but curses not found; disabled")
+    endif()
+endif()
+
+# ── GPM mouse ────────────────────────────────────────────────────────
+if(AALIB_MOUSE_GPM)
+    find_library(GPM_LIBRARY NAMES gpm)
+    if(GPM_LIBRARY AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        list(APPEND AALIB_SOURCES ${AALIB_SRC_DIR}/aagpm.c)
+        list(APPEND AALIB_DEFS GPM_MOUSEDRIVER)
+        list(APPEND AALIB_LIBS ${GPM_LIBRARY})
+        list(APPEND AALIB_ENABLED_BACKENDS gpm)
+    else()
+        message(WARNING "AALIB_MOUSE_GPM requested but libgpm not found or not on Linux; disabled")
+    endif()
+endif()
+
 add_library(aa STATIC ${AALIB_SOURCES})
 target_include_directories(aa PUBLIC ${AALIB_SRC_DIR})
+if(LIBDRM_FOUND)
+    target_include_directories(aa PRIVATE ${LIBDRM_INCLUDE_DIRS})
+endif()
+if(SLANG_INCLUDE_DIR)
+    target_include_directories(aa PRIVATE ${SLANG_INCLUDE_DIR})
+endif()
+if(X11_FOUND)
+    target_include_directories(aa PRIVATE ${X11_INCLUDE_DIR})
+endif()
+if(CURSES_FOUND)
+    target_include_directories(aa PRIVATE ${CURSES_INCLUDE_DIR})
+endif()
 # Silence warnings inside the legacy aalib code so they don't drown out ours.
 # Newer gcc promotes a few legacy K&R-style issues to errors; downgrade them.
 target_compile_options(aa PRIVATE
@@ -143,19 +284,20 @@ target_compile_options(aa PRIVATE
     -Wno-error=implicit-int
     -Wno-error=int-conversion
     -Wno-error=incompatible-pointer-types
+    -Wno-error=return-mismatch
 )
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND HAVE_LINUX_FB_H)
-    target_compile_definitions(aa PRIVATE FBDEV_DRIVER)
+if(AALIB_DEFS)
+    target_compile_definitions(aa PRIVATE ${AALIB_DEFS})
+endif()
+if(AALIB_LIBS)
+    target_link_libraries(aa PUBLIC ${AALIB_LIBS})
 endif()
 
 set(AALIB_INCLUDE_DIR ${AALIB_SRC_DIR})
 set(AALIB_LIBRARY aa)
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND HAVE_LINUX_FB_H)
-    message(STATUS "Using bundled AA-lib (stdout/stderr + fbdev backends)")
-else()
-    message(STATUS "Using bundled AA-lib (stdout/stderr backends only)")
-endif()
+list(JOIN AALIB_ENABLED_BACKENDS " " _aalib_backends_str)
+message(STATUS "AA-lib display backends: ${_aalib_backends_str}")
 
 # ── Optional: libmikmod ─────────────────────────────────────────────
 
