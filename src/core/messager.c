@@ -119,7 +119,7 @@ void messager(char *c)
             break;
         put_cp(cp);
 	putcursor();
-	bbflushwait(0.03 * 1000000);
+	bbflushwait(0.06 * 1000000);
     }
     bbflushwait(1000000);
     aa_gotoxy(context, 0, 0);

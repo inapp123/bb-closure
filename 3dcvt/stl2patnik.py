@@ -36,13 +36,13 @@ HEADER = """\
 
 /* Automatically generated from {source} */
 
-#define patniknFaces {n_faces}
-POLYS patnikobj[]=
+#define {obj_name}nFaces {n_faces}
+POLYS {obj_name}obj[]=
 {{
 """
 
 NORMAL_SCALE = 8192
-TARGET_SIZE = 120.0
+TARGET_SIZE = 110.0
 
 
 def rot_x(x, y, z, degrees):
@@ -56,11 +56,20 @@ def rot_y(x, y, z, degrees):
     c, s = math.cos(r), math.sin(r)
     return x * c + z * s, y, -x * s + z * c
 
+def rot_z(x, y, z, degrees):
+    r = math.radians(degrees)
+    c, s = math.cos(r), math.sin(r)
+    return x * c - y * s, x * s + y * c, z
+
+
 
 def orient_vertex(x, y, z):
     """Stand the model up, then yaw 45 + 180° for nicer 4-way views."""
     x, y, z = rot_x(x, y, z, -90)
-    x, y, z = rot_y(x, y, z, 45 + 180)
+    x, y, z = rot_y(x, y, z, 180)
+    x, y, z = rot_z(x, y, z, 45 + 180)
+    # x, y, z = rot_y(x, y, z, 90)
+    # x, y, z = rot_z(x, y, z, 90)
     return x, y, z
 
 
@@ -117,7 +126,7 @@ def format_face(vertices):
     return "  {  " + lines[0] + "\n" + "\n".join(lines[1:]) + "\n  }"
 
 
-def convert(input_path: Path, output_path: Path):
+def convert(input_path: Path, output_path: Path,obj_name: str):
     triangles = read_stl(input_path)
     oriented = []
     for v1, v2, v3 in triangles:
@@ -147,7 +156,7 @@ def convert(input_path: Path, output_path: Path):
 
     body = ",\n".join(faces)
     output_path.write_text(
-        HEADER.format(source=input_path.name, n_faces=len(faces))
+        HEADER.format(source=input_path.name, obj_name=obj_name, n_faces=len(faces))
         + body
         + ",\n};\n",
         encoding="utf-8",
@@ -159,8 +168,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("input_stl", type=Path)
     parser.add_argument("output_h", type=Path)
+    parser.add_argument("obj_name", type=str)
     args = parser.parse_args()
-    convert(args.input_stl, args.output_h)
+    convert(args.input_stl, args.output_h, args.obj_name)
 
 
 if __name__ == "__main__":
